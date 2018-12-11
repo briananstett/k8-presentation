@@ -1,3 +1,18 @@
 # Base Image
 FROM node:8.14.0-alpine
 
+# Create a new directory in the container's fs
+RUN mkdir  /nodeApp
+
+# Move to the new directory
+WORKDIR /nodeApp
+
+# Setup an environment variable
+ENV PORT=3000
+
+# Copy from current directory to /nodeApp
+COPY . /nodeApp
+
+# Run npm start when the container starts
+CMD npm start
+
