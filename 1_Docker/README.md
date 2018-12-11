@@ -5,6 +5,7 @@
 * [Install Docker for CentOS](https://docs.docker.com/install/linux/docker-ce/centos/)
 * [Install Docker for Windows](https://docs.docker.com/docker-for-windows/install/)
 
+---
 ## Dockerfile
 Docker builds images by reading the instructions from a `Dockerfile`. A `Dockerfile` is a text document that contains all the commands a user could call on the command line to assemble an image.
 
@@ -63,7 +64,7 @@ Once a Docker image is hosted in a registry, we can pull down that image to our 
 ```
 docker pull us.gcr.io/g-1575-internal-projects/myImage:v1
 ```
-
+---
 
 ## Running a container
 [docker run](https://docs.docker.com/engine/reference/run/) command is used to create a container. There are *many* flags and options associated with this command but for this example we will cover the basics. Please see [reference](https://docs.docker.com/engine/reference/run/) for guidance.
@@ -98,4 +99,6 @@ We can override the container's `CMD` instruction by start the container with ou
 ```
 docker run -it  us.gcr.io/g-1575-internal-projects/myImage:v1 /bin/sh
 ```
-This command will start a new container, but this time will just have a shell as the container's main process. We can now navigate the containe's filesytem and spawn child processes, even our node server
+This command will start a new container, but this time will just have a shell as the container's main process. We can now navigate the containe's filesytem and spawn child processes, even our node server.
+
+---
