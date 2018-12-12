@@ -71,15 +71,15 @@ docker pull us.gcr.io/g-1575-internal-projects/myImage:v1
 
 There are two main ways to run a container. In `Foreground mode` or in `Detached mode`.
 
-1. [Foreground](https://docs.docker.com/engine/reference/run/#foreground) mode starts a process in a container and attaches  the console to the process's standard input, output, and standard error. We can create a tty for the container and keep STDIN open with the `-it` flags
+1. [Foreground](https://docs.docker.com/engine/reference/run/#foreground) mode starts a process in a container and attaches  the console to the process's standard input, output, and standard error. We can create a tty for the container and keep STDIN open with the `-it` flags. The big take away is that the `-i` flag keeps the `STDIN` open even after execution of the entry command.
 
 ```
-docker run -it <image>:<option tag> <optional command>
+docker run -it -p 3000:3000 <image>:<option tag> <optional command>
 ```
 
 We can start our Node server and attach to it with the following command
 ```
-docker run -it  us.gcr.io/g-1575-internal-projects/myImage:v1
+docker run -it  -p 3000:3000 us.gcr.io/g-1575-internal-projects/myImage:v1
 ```
 This starts the server and we can see the logs as requests come through. It however is important to note that we are attached to the container's main executable process and with kill (-9) the process, the container will stop and we will get kicked out.
 
@@ -100,5 +100,7 @@ We can override the container's `CMD` instruction by start the container with ou
 docker run -it  us.gcr.io/g-1575-internal-projects/myImage:v1 /bin/sh
 ```
 This command will start a new container, but this time will just have a shell as the container's main process. We can now navigate the containe's filesytem and spawn child processes, even our node server.
+
+2. [Detached](https://docs.docker.com/engine/reference/run/#detached--d) mode starts a container the background and will exit when the root process used to tun the container exits. This is contrast to running a container with the `-i` flag which leave `STDIN` open even after completion of the root process.
 
 ---
