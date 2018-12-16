@@ -101,6 +101,65 @@ docker run -it  us.gcr.io/g-1575-internal-projects/myImage:v1 /bin/sh
 ```
 This command will start a new container, but this time will just have a shell as the container's main process. We can now navigate the containe's filesytem and spawn child processes, even our node server.
 
-2. [Detached](https://docs.docker.com/engine/reference/run/#detached--d) mode starts a container the background and will exit when the root process used to tun the container exits. This is contrast to running a container with the `-i` flag which leave `STDIN` open even after completion of the root process.
+2. [Detached](https://docs.docker.com/engine/reference/run/#detached--d) mode starts a container the background and will exit when the root process used to tun the container exits. This is contrast to running a container with the `-i` flag which leave `STDIN` open even after completion of the root process. Because the container will stop if the root process exits in a *detached* container, the root process must be run in the foreground of the container.
+
+```
+docker run -d -p 80:80 httpd apachectl -D FOREGROUND 
+```
+
+### Exposing Ports on Host Machine
+By default, each container has its own IP address and can be accessed from the host machine. If you would like to access a container from outside of the host machine, you need to [expose](https://docs.docker.com/engine/reference/run/#expose-incoming-ports) the port on the host machine that maps to the port on container. 
+
+`-p` is used to provide specific mappings
+```
+-p hostPort:containerPort
+-p hostPort-Range:containerPort-Range
+-p 8080:80 // Host port 8080 maps to port 80 on the container
+```
+
+`-P` pushlishes all exposed ports of the container to the host. Host ports are choosen at random from a configured range.
+
+```
+//Dockerfile
+...
+
+EXPOSE 80
+```
+```
+// Docker run
+brian@BrianDesktop:~$ docker run -d -P httpd
+```
+```
+// Docker ps
+brian@BrianDesktop:~$ docker ps
+CONTAINER ID        IMAGE               COMMAND              CREATED             STATUS              PORTS                   NAMES
+d8d3bcac214b        httpd               "httpd-foreground"   4 seconds ago       Up 2 seconds        0.0.0.0:32768->80/tcp   cranky_jackson
+```
+
+### Naming your containers
+By default, Docker file randomly assign you containers a human friendly name. If you wish to name your containers, you can with the [--name](https://docs.docker.com/engine/reference/run/#container-identification) flag of the `docker run` command
+
+```
+brian@BrianDesktop:~$ docker run -d -P --name dockerIsCool httpd
+```
+
+```
+brian@BrianDesktop:~$ docker ps
+CONTAINER ID        IMAGE               COMMAND              CREATED             STATUS              PORTS                   NAMES
+d6a568e8ea6a        httpd               "httpd-foreground"   3 seconds ago       Up 1 second         0.0.0.0:32769->80/tcp   dockerIsCool
+```
+
+### Mapping Host Devices Into a Container
+It is possible with Docker to "mount" or "map" a device on the host machine into a container. Use the [--device](https://docs.docker.com/engine/reference/commandline/run/#add-host-device-to-container---device) flag of the `docker run` command.
+
+By default, `--device` using the same destination device file as the source.
+```
+docker run --device=/dev/sda --rm -it ubuntu fdisk  /dev/sda
+```
+
+Mount to a specific device file in the container 
+```
+docker run --device=/dev/sda:/dev/xvdc --rm -it ubuntu fdisk  /dev/xvdc
+```
 
 ---
