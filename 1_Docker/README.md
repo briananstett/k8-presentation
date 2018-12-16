@@ -1,6 +1,13 @@
 # 1. Docker
-[Docker](https://docs.docker.com/) is one of the most popular container runtimes and we use at 24G. 
+[Docker](https://docs.docker.com/) is one of the most popular container runtimes we use at 24G. 
+#### Table of Contents
+* [Installation](#installation)
+* [Dockerfile](#dockerfile)
+* [Running a Container](#Running-a-container)
+* [Mapping External Devices Into a Container](#Mapping-Host-Devices-Into-a-Container)
+* [Persistent Storage](#persistent-storage)
 
+## Installation
 * [Install Docker for Ubuntu](https://docs.docker.com/install/linux/docker-ce/ubuntu/)
 * [Install Docker for CentOS](https://docs.docker.com/install/linux/docker-ce/centos/)
 * [Install Docker for Windows](https://docs.docker.com/docker-for-windows/install/)
@@ -148,8 +155,8 @@ brian@BrianDesktop:~$ docker ps
 CONTAINER ID        IMAGE               COMMAND              CREATED             STATUS              PORTS                   NAMES
 d6a568e8ea6a        httpd               "httpd-foreground"   3 seconds ago       Up 1 second         0.0.0.0:32769->80/tcp   dockerIsCool
 ```
-
-### Mapping Host Devices Into a Container
+---
+## Mapping Host Devices Into a Container
 It is possible with Docker to "mount" or "map" a device on the host machine into a container. Use the [--device](https://docs.docker.com/engine/reference/commandline/run/#add-host-device-to-container---device) flag of the `docker run` command.
 
 By default, `--device` using the same destination device file as the source.
@@ -161,9 +168,8 @@ Mount to a specific device file in the container
 ```
 $ docker run --device=/dev/sda:/dev/xvdc --rm -it ubuntu fdisk  /dev/xvdc
 ```
-
-
-### Persistent Storage
+---
+## Persistent Storage
 By default all files created inside a container are stored on a writable container layer. They will be lost when the container is deleted from the host machine. There are two types of main storage mechanisms we use at 24G, [volumes](https://docs.docker.com/storage/volumes/), and [bind mounts](https://docs.docker.com/storage/bind-mounts/). 
 
 1. [volumes](https://docs.docker.com/storage/volumes/) are a storage device completely managed by Docker. Docer volumes reside on the host's filesystem at `/var/lib/docker/volumes`. We use the [--mount](https://docs.docker.com/storage/volumes/#choose-the--v-or---mount-flag) flag on `docker run` to configure persistent storage.
@@ -211,4 +217,16 @@ $ docker inspect foobar --format '{{.Mounts}}'
 2. [Bind mounts](https://docs.docker.com/storage/bind-mounts/) mount a file or directory on the host machine into the container. Bind mounts rely on the host machine's filesystem having specific directory structure available.
 
 ![](./images/bindMount.png)
+
+let's mount my /tmp directory on my host machine into the container
+```
+hostmachine$ ls /tmp
+heyThere.txt
+```
+
+```
+$ docker run -it --name foobar --mount type=bind,src=/tmp,dst=/tmp centos /bin/bash
+[root@4ac5f31690b2 /] ls /tmp
+heyThere.txt
+```
 ---
