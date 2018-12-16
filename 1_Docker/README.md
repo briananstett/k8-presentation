@@ -154,12 +154,61 @@ It is possible with Docker to "mount" or "map" a device on the host machine into
 
 By default, `--device` using the same destination device file as the source.
 ```
-docker run --device=/dev/sda --rm -it ubuntu fdisk  /dev/sda
+$ docker run --device=/dev/sda --rm -it ubuntu fdisk  /dev/sda
 ```
 
 Mount to a specific device file in the container 
 ```
-docker run --device=/dev/sda:/dev/xvdc --rm -it ubuntu fdisk  /dev/xvdc
+$ docker run --device=/dev/sda:/dev/xvdc --rm -it ubuntu fdisk  /dev/xvdc
 ```
 
+
+### Persistent Storage
+By default all files created inside a container are stored on a writable container layer. They will be lost when the container is deleted from the host machine. There are two types of main storage mechanisms we use at 24G, [volumes](https://docs.docker.com/storage/volumes/), and [bind mounts](https://docs.docker.com/storage/bind-mounts/). 
+
+1. [volumes](https://docs.docker.com/storage/volumes/) are a storage device completely managed by Docker. Docer volumes reside on the host's filesystem at `/var/lib/docker/volumes`. We use the [--mount](https://docs.docker.com/storage/volumes/#choose-the--v-or---mount-flag) flag on `docker run` to configure persistent storage.
+
+![](./images/volume.png)
+
+`Anonymous volumes` will be created automatically on your behalf if you don't specify a source volume.
+
+```
+$ docker run -it --name storagetest --mount type=volume,dst=/tmp/fooBar centos /bin/bash
+```
+```
+$ docker inspect 23d5f5549cf4 --format '{{.Mounts}}'
+[{
+  volume 798efd6ec745b337af5c093f874345d02589861079224542d9850497e3a1093c 
+  /var/lib/docker/volumes/798efd6ec745b337af5c093f874345d02589861079224542d9850497e3a1093c
+  /_data /tmp/fooBar 
+}]
+```
+```
+$ docker volume ls
+local               798efd6ec745b337af5c093f874345d02589861079224542d9850497e3a1093c
+```
+
+`Named volumes` can be created ahead of time with the [docker volume create](https://docs.docker.com/engine/reference/commandline/volume_create/) command. You can use the created named volume as the source volume for in the `--mount` flag.
+
+```
+$ docker volume create foobar
+```
+```
+$ docker volume ls
+local               foobar
+```
+```
+$ docker run -it --name foobar --mount type=volume,src=foobar,dst=/tmp/foobar centos /bin/bash
+```
+```
+$ docker inspect foobar --format '{{.Mounts}}'
+[{
+  volume foobar /var/lib/docker/volumes/foobar/_data 
+  /tmp/foobar 
+}]
+```
+
+2. [Bind mounts](https://docs.docker.com/storage/bind-mounts/) mount a file or directory on the host machine into the container. Bind mounts rely on the host machine's filesystem having specific directory structure available.
+
+![](./images/bindMount.png)
 ---
