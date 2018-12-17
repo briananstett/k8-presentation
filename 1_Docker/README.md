@@ -230,3 +230,54 @@ $ docker run -it --name foobar --mount type=bind,src=/tmp,dst=/tmp centos /bin/b
 heyThere.txt
 ```
 ---
+
+## Container Management
+[docker ps](https://docs.docker.com/engine/reference/commandline/ps/#options) list all containers running. You can list all containers (running or not) with the `-a[--all]` flag
+```
+$ docker ps
+CONTAINER ID        IMAGE               COMMAND              CREATED             STATUS              PORTS                   NAMES
+d6a568e8ea6a        httpd               "httpd-foreground"   22 hours ago        Up 22 hours         0.0.0.0:32769->80/tcp   dockerIsCool
+```
+```
+$docker ps -a
+CONTAINER ID        IMAGE     COMMAND                  CREATED             STATUS                      PORTS                      NAMES
+d6a568e8ea6a        httpd     "httpd-foreground"       22 hours ago        Up 22 hours                 0.0.0.0:32769->80/tcp      dockerIsCool
+e8c9e0736709        centos    "/bin/tail"              4 days ago          Exited (0) 4 days ago                                  objective_hypatia
+208b1b767e6a        centos    "/bin/bash"              4 days ago          Exited (0) 4 days ago                                  relaxed_mcclintock
+```
+
+[docker logs](https://docs.docker.com/engine/reference/commandline/logs/) shows the `STDOUT` of a container.
+```
+$ docker logs d6a568e8ea6a
+AH00558: httpd: Could not reliably determine the server's fully qualified domain name, using 172.17.0.2. Set the 'ServerName' directive globally to suppress this message
+AH00558: httpd: Could not reliably determine the server's fully qualified domain name, using 172.17.0.2. Set the 'ServerName' directive globally to suppress this message
+[Sun Dec 16 03:04:31.727436 2018] [mpm_event:notice] [pid 1:tid 140450030589120] AH00489: Apache/2.4.37 (Unix) configured -- resuming normal operations
+[Sun Dec 16 03:04:31.727511 2018] [core:notice] [pid 1:tid 140450030589120] AH00094: Command line: 'httpd -D FOREGROUND'
+```
+
+[docker attach](https://docs.docker.com/engine/reference/commandline/attach/) attaches you local `STDIN` and `STDOUT` to a running container.
+```
+$ docker attach <container ID or name>
+```
+
+[docker stop](https://docs.docker.com/engine/reference/commandline/stop/) stops one or more running .containers.
+```
+$ docker stop <container id or name>
+```
+
+[docker rm](https://docs.docker.com/engine/reference/commandline/rm/) removes one or more containers. It's usually a good idea to include the `-v` flag which removes any volumes associated with the container.
+```
+$ docker rm -v <container id or name>
+```
+
+[docker images](https://docs.docker.com/engine/reference/commandline/images/) lists images
+```
+$ docker images
+REPOSITORY                                      TAG                 IMAGE ID            CREATED             SIZE
+us.gcr.io/g-1575-internal-projects/node         10_centos           7bd8bff0f108        12 days ago         517MB
+httpd                                           latest              2a51bb06dc8b        4 weeks ago         132MB
+```
+[docker rmi](https://docs.docker.com/engine/reference/commandline/rmi/) removes one or more images.
+```
+$ docker rmi <images id or name>
+```
