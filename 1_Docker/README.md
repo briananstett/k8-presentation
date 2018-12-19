@@ -13,7 +13,9 @@
 * [Install Docker for Windows](https://docs.docker.com/docker-for-windows/install/)
 
 ---
-## Dockerfile
+## Dockerfile and Images
+*For this section use `1_FirstContainer`*
+
 Docker builds images by reading the instructions from a `Dockerfile`. A `Dockerfile` is a text document that contains all the commands a user could call on the command line to assemble an image.
 
 ### Building a Dockerfile
@@ -43,13 +45,11 @@ CMD npm start
 ```
 A key concept to is what `Dockerfile keywords` run during the build step and runtime. From the example above, all the instructions *expect* `CMD`/`ENTRYPOINT` run once during the build. The only instructions that is used during runtime is the last instruction `CMD` which tells Docker which executable to run when the container starts.
 
+From within the `1_FirstContainer` direcotry... 
 ### Build the Image
 ```
-docker build -t <name of the image>:<optional tag> <Dockerfile location>
-```
-Run the following command in the root directory for this step
-```
-docker build -t us.gcr.io/g-1575-internal-projects/myImage:v1 . 
+// docker build -t <name of the image>:<optional tag> <Dockerfile location>
+$ docker build -t myimage:v1 .
 ```
 
 ### Push to a Container Registry
@@ -59,8 +59,21 @@ docker build -t us.gcr.io/g-1575-internal-projects/myImage:v1 .
 
 For this example, we've already created a *public* registry so no credentials are required. Almost all other 24G images are private are [require credentials to access](https://docs.docker.com/engine/reference/commandline/login/).
 
+First we need to re-tag our image we made in the last step in order to *push* our image to our registry. We can use the [docker tag](https://docs.docker.com/engine/reference/commandline/tag/) command to do this. Let's tag our image to be pushed to one of 24G's public registry. An image name is made up of slash-separated name components, optionally prefixed by a registry hostname.
+
 ```
-docker push us.gcr.io/g-1575-internal-projects/myImage:v1
+// optionalHostname/component1/component2/:tag
+// us.gcr.io/j-1794/activation2/:v1
+```
+
+To use our registry we have follow a certain image name pattern. Lets tag our earlier image.
+```
+// us.gcr.io/projectName/imageName:tag
+$ docker tag mycontainer:v1 us.gcr.io/g-1575-internal-projects/myimage:v1
+```
+Finally, push your image to the public registry.
+```
+docker push us.gcr.io/g-1575-internal-projects/myimage:v1
 ```
 
 
