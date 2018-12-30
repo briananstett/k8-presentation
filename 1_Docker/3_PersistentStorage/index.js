@@ -45,7 +45,6 @@ app.get('/imgur/image', (req, res, next) => {
 
 app.delete('/imgur/image/:image', (req, res, next) => {
   const image = req.params.image;
-  console.log(image);
   fs.unlink(path.join(__dirname, `./images/${image}`), err => {
     if (err) {
       console.log(err);
@@ -64,13 +63,14 @@ function init() {
   if (!fs.existsSync('imageIDs.json')) {
     console.log('Pulling Imgur image IDs');
 
-    imgur.getImageIds((error, images) => {
+    imgur.getImageIds((error, imgs) => {
       if (error) {
         console.log(error);
         rocess.exit();
       }
       console.log('Finished pulling image IDs');
-      fs.writeFileSync('imageIDs.json', JSON.stringify(images));
+      images = imgs;
+      fs.writeFileSync('imageIDs.json', JSON.stringify(imgs));
 
       return app.listen(3000, () => {
         console.log(`Imgur puller listening port ${port}`);

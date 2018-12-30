@@ -6,6 +6,7 @@
 * [Running a Container](#Running-a-container)
 * [Mapping External Devices Into a Container](#Mapping-Host-Devices-Into-a-Container)
 * [Persistent Storage](#persistent-storage)
+* [Container Management](#Container-Management)
 
 ## Installation
 * [Install Docker for Ubuntu](https://docs.docker.com/install/linux/docker-ce/ubuntu/)
