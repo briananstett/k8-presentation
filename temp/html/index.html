@@ -4,11 +4,198 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <meta http-equiv="X-UA-Compatible" content="ie=edge">
-  <title>Document</title>
+  <link href="https://fonts.googleapis.com/css?family=Open+Sans" rel="stylesheet">
+  <title>Imgur Puller</title>
 </head>
+<style>
+  * {
+    font-family: 'Open Sans', sans-serif;
+  }
 
-<body>
+  body {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+  }
+
+  button {
+    width: 300px;
+  }
+
+  #image_container {
+    margin: 30px;
+    width: 90%;
+    height: 300px;
+    display: flex;
+    flex-wrap: wrap;
+  }
+
+  .imgur_content {
+    margin: 10px;
+    width: 200px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    z-index: 10000;
+  }
+
+  .imgur_content img {
+    height: auto;
+    width: 100%;
+    display: block;
+    border: none;
+  }
+
+  .imgur_content video {
+    height: auto;
+    width: 100%;
+    display: block;
+  }
+</style>
+
+<body onload="loadContent()">
+  <h1>Imgur Content Puller</h1>
+  <p>Press the button pull and image, video, or gif from Imgur</p>
+  <button id="getContent">Pull From Imgur</button>
+  <div id="image_container">
+
+  </div>
 
 </body>
+<script>
+  function deleteImage(image, callback) {
+    var xhr = new XMLHttpRequest();
+    xhr.onload = function () {
+      if (xhr.status === 200) {
+        callback(null, image);
+      } else {
+        callback(xhr.status);
+      }
+    }
+    xhr.open('DELETE', `/imgur/image/${image}`);
+    xhr.send();
+  }
+
+  function loadContent() {
+    var xhr = new XMLHttpRequest();
+    xhr.onload = function () {
+      if (xhr.status === 200) {
+        const content = JSON.parse(xhr.responseText);
+        content.forEach(path => {
+          const type = path.split('.').pop();
+          if (type === 'mp4') {
+            document.getElementById("image_container").insertAdjacentHTML('beforeend', `
+            <div class="imgur_content" id="${path}">
+              <video controls>
+                <source src="${path}" type="video/mp4">
+                Your browser does not support the video tag.
+              </video>
+            </div>
+            `)
+          } else {
+            document.getElementById("image_container").insertAdjacentHTML('beforeend', `
+            <div class="imgur_content" id="${path}">
+              <img src="${path}">
+            </div>
+            `)
+          }
+
+          let contents = document.getElementById(path);
+          contents.addEventListener('click', e => {
+            const imgurContent = e.target;
+
+            if (imgurContent.tagName === 'IMG') {
+              const imageUrlParts = imgurContent.getAttribute('src').split('/');
+              const imageName = imageUrlParts[imageUrlParts.length - 1];
+
+              deleteImage(imageName, (error, success) => {
+                if (error) {
+                  return console.log(`Could not delete image ${imageName}`);
+                }
+                imgurContent.parentElement.remove()
+              })
+            } else if (imgurContent.tagName === 'VIDEO') {
+              const videoUrlParts = imgurContent.children[0].getAttribute('src').split('/');
+              const videoName = videoUrlParts[videoUrlParts.length - 1];
+
+              deleteImage(videoName, (error, success) => {
+                if (error) {
+                  console.log(error);
+                  return console.log(`Could not delete video ${videoName}`);
+                }
+                imgurContent.parentElement.remove()
+              })
+            }
+          })
+        })
+      } else {
+        console.log("There was an error while trying to get all Imgur content");
+      }
+    }
+
+    xhr.open('GET', `/images`);
+    xhr.send();
+  }
+
+  document.getElementById('getContent').addEventListener('click', e => {
+    e.preventDefault();
+    var xhr = new XMLHttpRequest();
+    xhr.onload = function () {
+      if (xhr.status === 200) {
+        const content = JSON.parse(xhr.responseText);
+        console.log(content);
+        const type = content.path.split('.').pop();
+        if (type === 'mp4') {
+          document.getElementById("image_container").insertAdjacentHTML('beforeend', `
+            <div class="imgur_content" id="${content.path}">
+              <video controls>
+                <source src="${content.path}" type="video/mp4">
+                Your browser does not support the video tag.
+              </video>
+            </div>
+            `)
+        } else {
+          document.getElementById("image_container").insertAdjacentHTML('beforeend', `
+            <div class="imgur_content" id="${content.path}">
+              <img src="${content.path}">
+            </div>
+            `)
+        }
+
+        let contents = document.getElementById(content.path);
+        contents.addEventListener('click', e => {
+          const imgurContent = e.target;
+
+          if (imgurContent.tagName === 'IMG') {
+            const imageUrlParts = imgurContent.getAttribute('src').split('/');
+            const imageName = imageUrlParts[imageUrlParts.length - 1];
+
+            deleteImage(imageName, (error, success) => {
+              if (error) {
+                return console.log(`Could not delete image ${imageName}`);
+              }
+              imgurContent.parentElement.remove()
+            })
+          } else if (imgurContent.tagName === 'VIDEO') {
+            const videoUrlParts = imgurContent.children[0].getAttribute('src').split('/');
+            const videoName = videoUrlParts[videoUrlParts.length - 1];
+
+            deleteImage(videoName, (error, success) => {
+              if (error) {
+                console.log(error);
+                return console.log(`Could not delete video ${videoName}`);
+              }
+              imgurContent.parentElement.remove()
+            })
+          }
+        })
+      } else {
+        callback(xhr.status);
+      }
+    }
+    xhr.open('GET', `/imgur/image/`);
+    xhr.send();
+  })
+</script>
 
 </html>
