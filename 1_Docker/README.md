@@ -70,7 +70,7 @@ First we need to re-tag our image we made in the last step in order to *push* ou
 To use our registry we have follow a certain image name pattern. Lets tag our earlier image.
 ```
 // us.gcr.io/projectName/imageName:tag
-$ docker tag mycontainer:v1 us.gcr.io/g-1575-internal-projects/myimage:v1
+$ docker tag myimage:v1 us.gcr.io/g-1575-internal-projects/myimage:v1
 ```
 Finally, push your image to the public registry.
 ```
@@ -171,6 +171,8 @@ d6a568e8ea6a        httpd               "httpd-foreground"   3 seconds ago      
 ```
 ---
 ## Mapping Host Devices Into a Container
+*For this section use `2_MappingExternalDevices`*
+
 It is possible with Docker to "mount" or "map" a device on the host machine into a container. Use the [--device](https://docs.docker.com/engine/reference/commandline/run/#add-host-device-to-container---device) flag of the `docker run` command.
 
 By default, `--device` using the same destination device file as the source.
@@ -182,8 +184,33 @@ Mount to a specific device file in the container
 ```
 $ docker run --device=/dev/sda:/dev/xvdc --rm -it ubuntu fdisk  /dev/xvdc
 ```
+In this example, we will map a <TODO> board into a container and run simple application to blink a LED light.
+
+First we need to make our new Docker image from the `Dockerfile` provided. In directory *2_MappingExternalDevices* run the following command to build the image.
+
+```
+$ docker build -t johnny:v1 .
+```
+Next, we need to list available devices on the host and their device file. Run the `listDevices.sh` shell script.
+
+```
+$ ./listDevices.sh
+/dev/input/event9 - Azurewave_USB2.0_HD_UVC_WebCam_0x0001
+/dev/input/mouse0 - Logitech_USB_Receiver
+/dev/input/event6 - Logitech_USB_Receiver
+```
+
+Finally, start a new container with the image we created and map the <TODO> board into it.
+
+```
+$ docker run --device=/dev/sda --rm -d johnny:v1
+```
+We should now start to see the LED blink.
+
 ---
 ## Persistent Storage
+*For this section use `3_PersistentStorage`*
+
 By default all files created inside a container are stored on a writable container layer. They will be lost when the container is deleted from the host machine. There are two types of main storage mechanisms we use at 24G, [volumes](https://docs.docker.com/storage/volumes/), and [bind mounts](https://docs.docker.com/storage/bind-mounts/). 
 
 1. [volumes](https://docs.docker.com/storage/volumes/) are a storage device completely managed by Docker. Docer volumes reside on the host's filesystem at `/var/lib/docker/volumes`. We use the [--mount](https://docs.docker.com/storage/volumes/#choose-the--v-or---mount-flag) flag on `docker run` to configure persistent storage.
@@ -242,6 +269,27 @@ heyThere.txt
 $ docker run -it --name foobar --mount type=bind,src=/tmp,dst=/tmp centos /bin/bash
 [root@4ac5f31690b2 /] ls /tmp
 heyThere.txt
+```
+
+In this example, we'll run a Nodejs application that pulls down content from Imgur and serves images, videos, and gifs locally. We'll attach persistent storage so all of the images pulled will not be lost when the container stops or is deleted.
+
+First, we need to build a new image using the provided `Dockerfile`.
+```
+$ docker build -t imgurPuller:v1 . 
+```
+
+Out of the box, we could start this image and Docker will automatically creat an Anonymous volumes and mount it because of the Docker file directive [Volume](https://docs.docker.com/engine/reference/builder/#volume). 
+```
+//Dockerfile
+...
+
+VOLUME /imgurApp/images
+```
+Using the `--mount` flag while executing `docker run` (volume or bind mount) will overide this directive.
+
+Let's try running the application with bind mount to a directory on our host machine.
+```
+$ docker run -d -p 3000:3000 --mount type=bind,src=/tmp/images,dst=/imgurApp/images imgurPuller:v1
 ```
 ---
 
