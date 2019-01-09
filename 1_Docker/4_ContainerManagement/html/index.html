@@ -1,0 +1,130 @@
+<html lang="en">
+
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta http-equiv="X-UA-Compatible" content="ie=edge">
+  <link href="https://fonts.googleapis.com/css?family=Poppins" rel="stylesheet">
+</head>
+
+<style>
+  * {
+    font-family: 'Poppins', sans-serif;
+    color: white;
+  }
+
+  body {
+    margin: 0;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+  }
+
+  .slice {
+    width: 100%;
+  }
+
+  #slice_1 {
+    background: #00BBD9;
+    text-align: center;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    flex: 1;
+  }
+
+  #slice_1 h1 {
+    font-size: 60pt;
+    color: white;
+  }
+
+  #slice_2 {
+    flex: 1;
+    display: flex;
+
+  }
+
+  .error {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    text-align: center;
+
+  }
+
+  #syntax_error {
+    background-color: #6C6D89;
+  }
+
+  #syntax_error img {
+    height: 75px;
+  }
+
+  #syntax_error p {
+    width: 80%;
+  }
+
+  #runtime_error {
+    background-color: #F36478;
+  }
+
+  #runtime_error img {
+    width: 75px;
+  }
+
+  pre {
+    border-radius: 5px;
+    -moz-border-radius: 5px;
+    -webkit-border-radius: 5px;
+    border: 1px solid #BCBEC0;
+    background: #F1F3F5;
+    font: 12px Monaco, Consolas, "Andale  Mono", "DejaVu Sans Mono", monospace
+  }
+
+  code {
+    border-radius: 5px;
+    -moz-border-radius: 5px;
+    -webkit-border-radius: 5px;
+    border: 1px solid #BCBEC0;
+    padding: 2px;
+    font: 12px Monaco, Consolas, "Andale  Mono", "DejaVu Sans Mono", monospace
+  }
+
+  pre code {
+    border-radius: 0px;
+    -moz-border-radius: 0px;
+    -webkit-border-radius: 0px;
+    border: 0px;
+    padding: 2px;
+    font: 12px Monaco, Consolas, "Andale  Mono", "DejaVu Sans Mono", monospace
+  }
+</style>
+
+<body>
+  <div id="slice_1" class="slice">
+    <h1>
+      You Fixed it!
+    </h1>
+  </div>
+  <div id=slice_2 class="slice">
+    <div id="syntax_error" class="error">
+      <img src="static/images/warning.svg">
+      <h1>Syntax Error</h1>
+      <p>We were able to debug our syntax error with the <code>docker ps -a</code> and the <code>docker logs</code>
+        command.</p>
+    </div>
+    <div id="runtime_error" class="error">
+      <img src="static/images/running.png">
+      <h1>Run Time Error</h1>
+      <p>We were able to debug our runtime error with the <code>docker logs</code> and the <code>docker exec </code>
+        command.</p>
+    </div>
+  </div>
+
+</body>
+
+</html>
