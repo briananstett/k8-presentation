@@ -1,7 +1,7 @@
 FROM node:10-alpine
-
 COPY ./ /nodeApp
-WORKDIR /nodeAPP
+
+WORKDIR /nodeApp
 
 EXPOSE 3000
 
