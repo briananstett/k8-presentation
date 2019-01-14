@@ -203,7 +203,7 @@ $ ./listDevices.sh
 Finally, start a new container with the image we created and map the <TODO> board into it.
 
 ```
-$ docker run --device=/dev/sda --rm -d johnny:v1
+$ docker run --device=/dev/sda --rm -id johnny:v1
 ```
 We should now start to see the LED blink.
 

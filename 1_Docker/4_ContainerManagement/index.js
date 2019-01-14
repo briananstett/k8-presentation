@@ -1,6 +1,6 @@
 const express = require('express');
 const app = express();
-const route = require('./middle_ware/mainRoute.js')
+const route = require('./middleware/mainRoute.js')
 const path = require('path');
 
 app.use('/static', express.static(path.join(__dirname, "html/static")));

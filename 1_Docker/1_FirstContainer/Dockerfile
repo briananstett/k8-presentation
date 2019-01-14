@@ -7,11 +7,11 @@ RUN mkdir  /nodeApp
 # Move to the new directory
 WORKDIR /nodeApp
 
-# Setup an environment variable
-ENV PORT=3000
-
 # Copy from current directory to /nodeApp
 COPY . /nodeApp
+
+# Setup an environment variable
+ENV PORT=3000
 
 # Run npm start when the container starts
 CMD npm start
