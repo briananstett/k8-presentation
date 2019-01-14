@@ -294,7 +294,9 @@ $ docker run -d -p 3000:3000 --mount type=bind,src=/tmp/images,dst=/imgurApp/ima
 ---
 
 ## Container Management
-[docker ps](https://docs.docker.com/engine/reference/commandline/ps/#options) list all containers running. You can list all containers (running or not) with the `-a[--all]` flag
+*For this section use `1_FirstContainer`*
+
+[docker ps](https://docs.docker.com/engine/reference/commandline/ps/#options) list all containers running. You can list all containers (running or not) with the `-a[--all]` flag.
 ```
 $ docker ps
 CONTAINER ID        IMAGE               COMMAND              CREATED             STATUS              PORTS                   NAMES
@@ -343,3 +345,89 @@ httpd                                           latest              2a51bb06dc8b
 ```
 $ docker rmi <images id or name>
 ```
+
+Let's try replicate an error with our image. First we need build our "faulty" image. 
+```
+$ npm install
+$ docker build -t broken-image:v1 .
+```
+
+Try running that image.
+```
+$ docker run -d -p 3000:3000 broken-image:v1
+426762011d86f3eb286dc0df4890c9a71433f6df3e3639639bb6480c16ff6106
+
+$ docker ps
+CONTAINER ID        IMAGE               COMMAND             CREATED             STATUS              PORTS               NAMES
+```
+
+The container started without any errors but `docker ps` doesn't show any running containers. This means our container's main process failed causing the container to stop.
+
+We can use the `docker ps -a` command to get the the Container ID of a stopped container
+```
+$ docker ps -a
+CONTAINER ID     IMAGE             COMMAND                  CREATED         STATUS                       PORTS      NAMES
+426762011d86     broken-image:v1   "/bin/sh -c 'npm sta…"   3 minutes ago   Exited (254) 3 minutes ago              keen_northcutt
+```
+
+Then get the logs from the stopped container.
+```
+$ docker logs 426762011d86
+Error: Cannot find module './middleware/mainRoute.js'
+    at Function.Module._resolveFilename (internal/modules/cjs/loader.js:581:15)
+    at Function.Module._load (internal/modules/cjs/loader.js:507:25)
+    at Module.require (internal/modules/cjs/loader.js:637:17)
+    at require (internal/modules/cjs/helpers.js:22:18)
+    at Object.<anonymous> (/nodeApp/index.js:3:15)
+    at Module._compile (internal/modules/cjs/loader.js:689:30)
+    at Object.Module._extensions..js (internal/modules/cjs/loader.js:700:10)
+    at Module.load (internal/modules/cjs/loader.js:599:32)
+    at tryModuleLoad (internal/modules/cjs/loader.js:538:12)
+    at Function.Module._load (internal/modules/cjs/loader.js:530:3)
+npm ERR! code ELIFECYCLE
+npm ERR! errno 1
+npm ERR! 4_containermanagement@1.0.0 start: `node index.js`
+npm ERR! Exit status 1
+npm ERR!
+npm ERR! Failed at the 4_containermanagement@1.0.0 start script.
+npm ERR! This is probably not a problem with npm. There is likely additional logging output above.
+
+npm ERR! A complete log of this run can be found in:
+npm ERR!     /root/.npm/_logs/2019-01-11T02_59_12_945Z-debug.log
+```
+
+Looks like I mistyped my route to a middleware function. lets fix the error and try again.
+```
+// Line three of index.js
+const route = require('./middleware/mainRoute.js');
+// Change to 
+const route = require('./middle_ware/mainRoute.js');
+```
+
+Rebuild the image and run
+```
+$ docker build docker build -t broken-image:v2 .
+$ docker run -d -p 3000:3000 broken-image:v2
+f328ba89a889d897bc950dcc3fcd76d9ec853045a46c1598f9e501cd41c40cad
+
+$docker ps
+CONTAINER ID    IMAGE               COMMAND                  CREATED         STATUS         PORTS                    NAMES
+f328ba89a889    broken-image:v2     "/bin/sh -c 'npm sta…"   2 seconds ago   Up 2 seconds   0.0.0.0:3000->3000/tcp   jolly_clarke
+```
+![](./4_ContainerManagement/html/static/images/broken.png)
+For some reason, the page isn't full screen. Let's get into the container and checkout the html. We can start a shell as a new process in the container with the [docker exec](https://docs.docker.com/engine/reference/commandline/exec/).
+
+```
+$ docker exec -it f328ba89a889 /bin/sh
+# vi html/index.html
+
+// change
+<asdfasdf>
+  <div id="slice_1" class="slice">^M
+
+// to 
+<body>
+  <div id="slice_1" class="slice">^M
+```
+
+
