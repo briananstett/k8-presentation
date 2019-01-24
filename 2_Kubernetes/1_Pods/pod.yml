@@ -1,0 +1,17 @@
+apiVersion: v1
+kind: Pod
+metadata:
+  name: myfirstpod
+  labels:
+    name: myfirstpod
+    environment: development
+spec:
+  containers:
+  - name: webserver
+    image: httpd
+    ports:
+      - containerPort: 80
+  - name: spectator
+    image: centos
+    command: ['tail']
+    args: ['-f', '/etc/hosts']

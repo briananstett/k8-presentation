@@ -271,6 +271,13 @@ $ docker run -it --name foobar --mount type=bind,src=/tmp,dst=/tmp centos /bin/b
 heyThere.txt
 ```
 
+```
+$ docker inspect foobar --format '{{.Mounts}}'
+[{
+  bind  /tmp /tmp   true rprivate} 
+}]
+```
+
 In this example, we'll run a Nodejs application that pulls down content from Imgur and serves images, videos, and gifs locally. We'll attach persistent storage so all of the images pulled will not be lost when the container stops or is deleted.
 
 First, we need to build a new image using the provided `Dockerfile`.
@@ -319,7 +326,7 @@ AH00558: httpd: Could not reliably determine the server's fully qualified domain
 [Sun Dec 16 03:04:31.727511 2018] [core:notice] [pid 1:tid 140450030589120] AH00094: Command line: 'httpd -D FOREGROUND'
 ```
 
-[docker attach](https://docs.docker.com/engine/reference/commandline/attach/) attaches you local `STDIN` and `STDOUT` to a running container.
+[docker attach](https://docs.docker.com/engine/reference/commandline/attach/) attaches your local `STDIN` and `STDOUT` to a running container.
 ```
 $ docker attach <container ID or name>
 ```
@@ -332,6 +339,13 @@ $ docker stop <container id or name>
 [docker rm](https://docs.docker.com/engine/reference/commandline/rm/) removes one or more containers. It's usually a good idea to include the `-v` flag which removes any volumes associated with the container.
 ```
 $ docker rm -v <container id or name>
+```
+
+[docker exec](https://docs.docker.com/engine/reference/commandline/exec/) runs a command in a running container. This is extremely useful for getting a shell in in a running container
+```
+$ docker exec -it <container id or name> /bin/bash
+// Inside container
+[root]# tail /etc/hosts
 ```
 
 [docker images](https://docs.docker.com/engine/reference/commandline/images/) lists images

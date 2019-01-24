@@ -26,3 +26,10 @@ Developers can get access to kubectl either through the GCP console or locally o
     ```
     gcloud container clusters get-credentials <cluster_name>
     ```
+```
+$ kube get nodes
+NAME                                                 STATUS    ROLES     AGE       VERSION
+gke-internal-24g-cluster-high-memory-bdc98794-g23n   Ready     <none>    20d       v1.11.5-gke.5
+gke-internal-24g-cluster-high-memory-bdc98794-gjh9   Ready     <none>    20d       v1.11.5-gke.5
+gke-internal-24g-cluster-high-memory-d13e8c99-0scz   Ready     <none>    20d       v1.11.5-gke.5
+```
