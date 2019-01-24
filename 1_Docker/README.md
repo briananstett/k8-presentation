@@ -294,7 +294,7 @@ In this example, we'll run a Nodejs application that pulls down content from Img
 
 First, we need to build a new image using the provided `Dockerfile`.
 ```
-$ docker build -t imgurPuller:v1 . 
+$ docker build -t imgurpuller:v1 . 
 ```
 
 Out of the box, we could start this image and Docker will automatically creat an Anonymous volumes and mount it because of the Docker file directive [Volume](https://docs.docker.com/engine/reference/builder/#volume). 
@@ -308,7 +308,7 @@ Using the `--mount` flag while executing `docker run` (volume or bind mount) wil
 
 Let's try running the application with bind mount to a directory on our host machine.
 ```
-$ docker run -d -p 3000:3000 --mount type=bind,src=/tmp/images,dst=/imgurApp/images imgurPuller:v1
+$ docker run -d -p 3000:3000 --mount type=bind,src=/tmp/images,dst=/imgurApp/images imgurpuller:v1
 ```
 ---
 
