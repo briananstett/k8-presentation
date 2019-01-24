@@ -327,7 +327,9 @@ spec:
       securityContext: {}
       terminationGracePeriodSeconds: 30
 ```
+
 We can see the state of our deployment start to change
+
 ```
 $ kubectl get pods
 NAME                                      READY     STATUS              RESTARTS   AGE
@@ -340,6 +342,7 @@ httpd-deployment-6bfb858dd5-g66vj         0/1       ContainerCreating   0       
 ```
 
 Let's deploy a new image. We can do this by, again, using the *edit* command
+
 ```
 $ kubectl edit deployment httpd-deployment
 // Edit the lines with *
@@ -395,6 +398,7 @@ spec:
       securityContext: {}
       terminationGracePeriodSeconds: 30
 ```
+
 and watch as the deployment gradually rolls out the new image, never completely taking our  deployment down. This is called *rolling update*.
 
 ```
@@ -417,6 +421,7 @@ httpd-deployment-6bfb858dd5-ljh5h         1/1       Running             0       
 [Horizontal Pod Autoscaler](https://kubernetes.io/docs/tasks/run-application/horizontal-pod-autoscale-walkthrough/) automatically scales the number of pods in a replication controller, deployment or replica set based on observed CPU utilization (or, with beta support, on some other, application-provided metrics).
 
 We can specify which resource to watch, min/max replicas, and our target average utilization.
+
 ```
 apiVersion: autoscaling/v2beta1
 kind: HorizontalPodAutoscaler
@@ -439,6 +444,7 @@ spec:
 ```
 
 Create our deployment, service, and HPA by
+
 ```
 // If you didn't clone the repo
 <>
@@ -448,6 +454,7 @@ $ kubectl create -f 4_AutoScaling/deploymentServiceHPA.yml
 ```
 
 We can see the status of our HPA by
+
 ```
 $ kubectl get hpa
 NAME         REFERENCE                      TARGETS   MINPODS   MAXPODS   REPLICAS   AGE
@@ -456,6 +463,7 @@ apache-hpa   Deployment/apache-deployment   0%/50%    2         10        2     
 ```
 
 Get the external IP for this example
+
 ```
 $ kubectl get services
 NAME                  TYPE           CLUSTER-IP      EXTERNAL-IP     PORT(S)          AGE
@@ -463,6 +471,7 @@ apache-service        LoadBalancer   10.19.246.107   35.226.239.84   80:30823/TC
 ```
 
 Now let's start to send some traffic its way. In a seperate shell run the following command.
+
 ```
 $ while true; do curl 35.226.239.84; done
 ```
@@ -472,5 +481,12 @@ After about a minute, we see the hpa reporting higher CPU utilization and begin 
 ```
 $ kubectl get hpa
 NAME         REFERENCE                      TARGETS    MINPODS   MAXPODS   REPLICAS   AGE
-apache-hpa   Deployment/apache-deployment   107%/50%   2         10        2          13m
+apache-hpa   Deployment/apache-deployment   107%/50%   2         10        3         13m
+
+$kubectl get pods
+NAME                                      READY     STATUS    RESTARTS   AGE
+apache-deployment-79769b55c5-jxb4n        1/1       Running   0          14m
+apache-deployment-79769b55c5-t5cgk        1/1       Running   0          14m
+apache-deployment-79769b55c5-x6ccl        1/1       Running   0          42s
+```
 
