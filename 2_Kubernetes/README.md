@@ -227,7 +227,7 @@ If we navigate to the EXTERNAL-IP, we'll see our httpd default page. Would could
 Lets create our deployment and service.
 ```
 // If you didn't clone the repo
-<>
+$ kubectl create -f https://bitbucket.org/briananstett/k8-24g-workshop/raw/a9ef1116888b259f5aec0ba490ed3b882eca4e29/2_Kubernetes/3_Deployments/podDeploymentService.yml
 
 // If you did clone the repo
 $ kubectl create -f 3_Deployments/podDeploymentService.yml
@@ -271,4 +271,206 @@ httpd-deployment-6754855469-xsnpn         1/1       Running             0       
 ```
 
 We change edit the state of our deployment with the [edit](https://kubernetes.io/docs/reference/generated/kubectl/kubectl-commands#edit) command.
+
+```
+$ kube edit deployment httpd-deployment
+// Will open up your editor. Go to lines with * on it
+
+apiVersion: extensions/v1beta1
+kind: Deployment
+metadata:
+  annotations:
+    deployment.kubernetes.io/revision: "1"
+  creationTimestamp: 2019-01-24T15:44:37Z
+  generation: 1
+  labels:
+*   environmnet: development // change this to production
+    name: httpd-deployment
+  name: httpd-deployment
+  namespace: bowling-development
+  resourceVersion: "40751785"
+  selfLink: /apis/extensions/v1beta1/namespaces/bowling-development/deployments/httpd-deployment
+  uid: f4654cff-1fee-11e9-9b10-42010a80016f
+spec:
+  progressDeadlineSeconds: 600
+* replicas: 10
+  revisionHistoryLimit: 10
+  selector:
+    matchLabels:
+      name: httpd-pod
+  strategy:
+    rollingUpdate:
+      maxSurge: 1
+      maxUnavailable: 0
+    type: RollingUpdate
+  template:
+    metadata:
+      creationTimestamp: null
+      labels:
+        environment: development
+        name: httpd-pod
+      name: httpd-pod
+    spec:
+      containers:
+     - image: nginx
+        imagePullPolicy: Always
+        name: httpd-container
+        ports:
+        - containerPort: 80
+          protocol: TCP
+        resources: {}
+        terminationMessagePath: /dev/termination-log
+        terminationMessagePolicy: File
+      dnsPolicy: ClusterFirst
+      restartPolicy: Always
+      schedulerName: default-scheduler
+      securityContext: {}
+      terminationGracePeriodSeconds: 30
+```
+We can see the state of our deployment start to change
+```
+$ kubectl get pods
+NAME                                      READY     STATUS              RESTARTS   AGE
+httpd-deployment-6754855469-dsmtz         1/1       Running             0          14m
+httpd-deployment-6754855469-g64df         1/1       Running             0          23m
+httpd-deployment-6754855469-lknql         0/1       ContainerCreating   0          3s
+httpd-deployment-6754855469-n9hjq         0/1       ContainerCreating   0          3s
+httpd-deployment-6754855469-xsnpn         1/1       Running             0          23m
+httpd-deployment-6bfb858dd5-g66vj         0/1       ContainerCreating   0          3s
+```
+
+Let's deploy a new image. We can do this by, again, using the *edit* command
+```
+$ kubectl edit deployment httpd-deployment
+// Edit the lines with *
+
+apiVersion: extensions/v1beta1
+kind: Deployment
+metadata:
+  annotations:
+    deployment.kubernetes.io/revision: "3"
+  creationTimestamp: 2019-01-24T15:44:37Z
+  generation: 3
+  labels:
+    environmnet: production
+    name: httpd-deployment
+  name: httpd-deployment
+  namespace: bowling-development
+  resourceVersion: "40755675"
+  selfLink: /apis/extensions/v1beta1/namespaces/bowling-development/deployments/httpd-deployment
+  uid: f4654cff-1fee-11e9-9b10-42010a80016f
+spec:
+  progressDeadlineSeconds: 600
+  replicas: 5
+  revisionHistoryLimit: 10
+  selector:
+    matchLabels:
+      name: httpd-pod
+  strategy:
+    rollingUpdate:
+      maxSurge: 1
+      maxUnavailable: 0
+    type: RollingUpdate
+  template:
+    metadata:
+      creationTimestamp: null
+      labels:
+        environment: development
+        name: httpd-pod
+      name: httpd-pod
+    spec:
+      containers:
+      - image: nginx
+        imagePullPolicy: Always
+        name: httpd-container
+        ports:
+        - containerPort: 80
+          protocol: TCP
+        resources: {}
+        terminationMessagePath: /dev/termination-log
+        terminationMessagePolicy: File
+      dnsPolicy: ClusterFirst
+      restartPolicy: Always
+      schedulerName: default-scheduler
+      securityContext: {}
+      terminationGracePeriodSeconds: 30
+```
+and watch as the deployment gradually rolls out the new image, never completely taking our  deployment down. This is called *rolling update*.
+
+```
+$ kubectl get pods --watch
+NAME                                      READY     STATUS              RESTARTS   AGE
+httpd-deployment-6754855469-7zbl2         1/1       Terminating         0          3m
+httpd-deployment-6754855469-bpv64         1/1       Running             0          3m
+httpd-deployment-6754855469-hrp29         1/1       Running             0          3m
+httpd-deployment-6754855469-kw4b2         1/1       Running             0          3m
+httpd-deployment-6754855469-xc7hp         1/1       Running             0          3m
+httpd-deployment-6bfb858dd5-2dd7k         0/1       ContainerCreating   0          1s
+httpd-deployment-6bfb858dd5-ljh5h         1/1       Running             0          4s
+
+...
+```
+
+---
+## Horizontal Pod Autoscaler
+
+[Horizontal Pod Autoscaler](https://kubernetes.io/docs/tasks/run-application/horizontal-pod-autoscale-walkthrough/) automatically scales the number of pods in a replication controller, deployment or replica set based on observed CPU utilization (or, with beta support, on some other, application-provided metrics).
+
+We can specify which resource to watch, min/max replicas, and our target average utilization.
+```
+apiVersion: autoscaling/v2beta1
+kind: HorizontalPodAutoscaler
+metadata:
+  labels:
+    name: apache-hpa
+  name: apache-hpa
+spec:
+  scaleTargetRef:
+    apiVersion: apps/v1
+    kind: Deployment
+    name: apache-deployment
+  minReplicas: 2
+  maxReplicas: 10
+  metrics:
+  - type: Resource
+    resource:
+      name: cpu
+      targetAverageUtilization: 50
+```
+
+Create our deployment, service, and HPA by
+```
+// If you didn't clone the repo
+<>
+
+// If you cloned the repo
+$ kubectl create -f 4_AutoScaling/deploymentServiceHPA.yml
+```
+
+We can see the status of our HPA by
+```
+$ kubectl get hpa
+NAME         REFERENCE                      TARGETS   MINPODS   MAXPODS   REPLICAS   AGE
+apache-hpa   Deployment/apache-deployment   0%/50%    2         10        2          18m
+
+```
+
+Get the external IP for this example
+```
+$ kubectl get services
+NAME                  TYPE           CLUSTER-IP      EXTERNAL-IP     PORT(S)          AGE
+apache-service        LoadBalancer   10.19.246.107   35.226.239.84   80:30823/TCP     16m
+```
+
+Now let's start to send some traffic its way. In a seperate shell run the following command.
+```
+$ while true; do curl 35.226.239.84; done
+```
+
+After about a minute, we see the hpa reporting higher CPU utilization and begin to scale the deployment for us.
+
+```
+$ kubectl get hpa
+NAME         REFERENCE                      TARGETS    MINPODS   MAXPODS   REPLICAS   AGE
+apache-hpa   Deployment/apache-deployment   107%/50%   2         10        2          13m
 
