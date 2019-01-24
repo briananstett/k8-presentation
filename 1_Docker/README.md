@@ -17,7 +17,7 @@
 ## Dockerfile and Images
 *For this section use `1_FirstContainer`*
 
-Docker builds images by reading the instructions from a `Dockerfile`. A `Dockerfile` is a text document that contains all the commands a user could call on the command line to assemble an image.
+Docker builds images by reading the instructions from a `Dockerfile`. A `Dockerfile` is a text document that contains all the commands a user could call on the command line to assemble an image. Think of a Docker image as *class* in object oriented programming, from which we can instantiate our continers from. 
 
 ### Building a Dockerfile
 * Dockerfile documentation can be found [here](https://docs.docker.com/engine/reference/builder/).
@@ -31,14 +31,14 @@ FROM node:8.14.0-alpine
 # Create a new directory in the container's fs
 RUN mkdir  /nodeApp
 
+# Copy from current directory to /nodeApp
+COPY . /nodeApp
+
 # Move to the new directory
 WORKDIR /nodeApp
 
 # Setup an environment variable
 ENV PORT=3000
-
-# Copy from current directory to /nodeApp
-COPY . /nodeApp
 
 # Run npm start when the container starts
 CMD npm start
@@ -52,38 +52,11 @@ From within the `1_FirstContainer` direcotry...
 // docker build -t <name of the image>:<optional tag> <Dockerfile location>
 $ docker build -t myimage:v1 .
 ```
-
-### Push to a Container Registry
-[Container Registries](https://docs.docker.com/registry/) are repositories for storing and distributing your Docker images. They can be private or public and self hosted or through a registry provider. At 24G we primarly use [GCP's Container Registry](https://cloud.google.com/container-registry/).
-
-[docker push](https://docs.docker.com/engine/reference/commandline/push/) is used to push an image to registry.
-
-For this example, we've already created a *public* registry so no credentials are required. Almost all other 24G images are private are [require credentials to access](https://docs.docker.com/engine/reference/commandline/login/).
-
-First we need to re-tag our image we made in the last step in order to *push* our image to our registry. We can use the [docker tag](https://docs.docker.com/engine/reference/commandline/tag/) command to do this. Let's tag our image to be pushed to one of 24G's public registry. An image name is made up of slash-separated name components, optionally prefixed by a registry hostname.
-
+We can see al Docker images on our machine with [docker images](https://docs.docker.com/engine/reference/commandline/images/)
 ```
-// optionalHostname/component1/component2/:tag
-// us.gcr.io/j-1794/activation2/:v1
-```
-
-To use our registry we have follow a certain image name pattern. Lets tag our earlier image.
-```
-// us.gcr.io/projectName/imageName:tag
-$ docker tag myimage:v1 us.gcr.io/g-1575-internal-projects/myimage:v1
-```
-Finally, push your image to the public registry.
-```
-docker push us.gcr.io/g-1575-internal-projects/myimage:v1
-```
-
-
-### Pull an Image
-Once a Docker image is hosted in a registry, we can pull down that image to our workstation or server.
-
-[docker pull](https://docs.docker.com/engine/reference/commandline/pull/) command is used to pull down an image from a registry.
-```
-docker pull us.gcr.io/g-1575-internal-projects/myImage:v1
+$ docker images
+REPOSITORY                TAG             IMAGE ID            CREATED             SIZE
+myimages                  v1              22fd13a039d0        Just Now            399MB
 ```
 ---
 
@@ -170,10 +143,49 @@ CONTAINER ID        IMAGE               COMMAND              CREATED            
 d6a568e8ea6a        httpd               "httpd-foreground"   3 seconds ago       Up 1 second         0.0.0.0:32769->80/tcp   dockerIsCool
 ```
 ---
+### Push to a Container Registry
+[Container Registries](https://docs.docker.com/registry/) are repositories for storing and distributing your Docker images. They can be private or public and self hosted or through a registry provider. At 24G we primarly use [GCP's Container Registry](https://cloud.google.com/container-registry/).
+
+[docker push](https://docs.docker.com/engine/reference/commandline/push/) is used to push an image to registry.
+
+For this example, we've already created a *public* registry so no credentials are required. Almost all other 24G images are private are [require credentials to access](https://docs.docker.com/engine/reference/commandline/login/).
+
+To create a container registry, navigaate to GCP > Container Registry and *Enable API*. By default, GCP container registries are private so we have to signin.
+
+```
+$ gcloud auth configure-docker
+```
+
+First we need to re-tag our image we made in the last step in order to *push* our image to our registry. We can use the [docker tag](https://docs.docker.com/engine/reference/commandline/tag/) command to do this. Let's tag our image to be pushed to our public registry. An image name is made up of slash-separated name components, optionally prefixed by a registry hostname.
+
+```
+// optionalHostname/component1/component2/:tag
+// us.gcr.io/j-1794/activation2/:v1
+```
+
+To use our registry we have follow a certain image name pattern. Lets tag our earlier image.
+```
+// us.gcr.io/projectName/imageName:tag
+$ docker tag myimage:v1 gcr.io/<project id>/myimage:v1
+```
+Finally, push your image to the public registry.
+```
+docker push myimage:v1 gcr.io/<project id>/myimage:v1
+```
+
+
+### Pull an Image
+Once a Docker image is hosted in a registry, we can pull down that image to our workstation or server.
+
+[docker pull](https://docs.docker.com/engine/reference/commandline/pull/) command is used to pull down an image from a registry.
+```
+docker pull us.gcr.io/<>/myImage:v1
+```
+---
 ## Mapping Host Devices Into a Container
 *For this section use `2_MappingExternalDevices`*
 
-It is possible with Docker to "mount" or "map" a device on the host machine into a container. Use the [--device](https://docs.docker.com/engine/reference/commandline/run/#add-host-device-to-container---device) flag of the `docker run` command.
+It is possible with Docker to "mount" or "map" a device on the host machine into a container. Use the [--device](https://docs.docker.com/engine/reference/commandline/run/#add-host-device-to-container---device) flag of the `docker run` command. This would be helpful for number of reasons (IoT, local development, PnP, etc.)
 
 By default, `--device` using the same destination device file as the source.
 ```
@@ -184,7 +196,7 @@ Mount to a specific device file in the container
 ```
 $ docker run --device=/dev/sda:/dev/xvdc --rm -it ubuntu fdisk  /dev/xvdc
 ```
-In this example, we will map a <TODO> board into a container and run simple application to blink a LED light.
+In this example, we will map a arduino board into a container and run simple application to blink a LED light.
 
 First we need to make our new Docker image from the `Dockerfile` provided. In directory *2_MappingExternalDevices* run the following command to build the image.
 
@@ -203,7 +215,7 @@ $ ./listDevices.sh
 Finally, start a new container with the image we created and map the <TODO> board into it.
 
 ```
-$ docker run --device=/dev/sda --rm -d johnny:v1
+$ docker run --device=/dev/sda --rm -id johnny:v1
 ```
 We should now start to see the LED blink.
 
