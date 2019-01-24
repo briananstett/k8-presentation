@@ -1,4 +1,4 @@
-# 1. Kubernetes  <img src="./images/k8Logo.png" width=100 align="right">
+# 1. Kubernetes 
 
 [Kubernetes](https://kubernetes.io/) is a production grade container orchesteration system.
 
