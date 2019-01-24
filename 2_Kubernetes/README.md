@@ -28,6 +28,7 @@ Developers can get access to kubectl either through the GCP console or locally o
     ```
 
 Create a fierewall rule for your load balancer
+
 1. Compute Engine > VM Instances
 2. Select one of your instances
 3. Search for a `network tag` and keep that for latter
