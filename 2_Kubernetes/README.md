@@ -179,13 +179,27 @@ There are [three main types of services](https://kubernetes.io/docs/concepts/ser
 2. NodePort: Exposes the service on each Node's IP at a static port
 3. LoadBalancer: Exposes the service externally using a cloud provider's load balancer
 
+```
+kind: Service
+apiVersion: v1
+metadata:
+  name: httpd-service
+spec:
+  selector:
+    name: httpd-pod
+  ports:
+  - protocol: TCP
+    port: 80
+    targetPort: 80
+  type: LoadBalancer
+```
 
 Let's create a new httpd pod and expose it via a service
 ```
 // If you didnt' clone the repo
-<>
+$ kubectl create -f https://bitbucket.org/briananstett/k8-24g-workshop/raw/546d70c0cd106d61297ece2a809b98e2f4b3618a/2_Kubernetes/2_Services/podAndService.yml
 
-// if you did clone the repo
+// If you did clone the repo
 $ kubectl create -f 2_Services/podAndService.yml
 pod "httpd-pod" created
 service "httpd-service" created
@@ -209,4 +223,52 @@ If we navigate to the EXTERNAL-IP, we'll see our httpd default page. Would could
 
 ## Deployments
 [Deployments](https://kubernetes.io/docs/concepts/workloads/controllers/deployment/) maintain maintain a desired state of your pods (image, number of replicas, etc.)
+
+Lets create our deployment and service.
+```
+// If you didn't clone the repo
+<>
+
+// If you did clone the repo
+$ kubectl create -f 3_Deployments/podDeploymentService.yml
+deployment.extensions "httpd-deployment" created
+service "httpd-service" created
+```
+
+We can see our deployment has build by
+```
+$ kubectl get deployments
+NAME                     DESIRED   CURRENT   UP-TO-DATE   AVAILABLE   AGE
+httpd-deployment         3         3         3            3           5m
+```
+
+and pods
+
+```
+$ kubectl get pods
+NAME                                      READY     STATUS    RESTARTS   AGE
+httpd-deployment-6754855469-6x5lb         1/1       Running   0          6m
+httpd-deployment-6754855469-g64df         1/1       Running   0          6m
+httpd-deployment-6754855469-xsnpn         1/1       Running   0          6m
+```
+and our service
+```
+$ kubectl get services
+NAME                  TYPE           CLUSTER-IP      EXTERNAL-IP     PORT(S)          AGE
+httpd-service         LoadBalancer   10.19.246.10    35.226.239.84   80:31694/TCP     6m
+```
+
+If we where to "accidently" delete one of our pods, our deployment would notice the state has changed quickly create a new pod for us.
+```
+$ kubectl delete pod httpd-deployment-6754855469-6x5lb
+pod "httpd-deployment-6754855469-6x5lb" deleted
+
+$ NAME                                      READY     STATUS              RESTARTS   AGE
+httpd-deployment-6754855469-6x5lb         0/1       Terminating         0          8m
+httpd-deployment-6754855469-dsmtz         0/1       ContainerCreating   0          2s
+httpd-deployment-6754855469-g64df         1/1       Running             0          8m
+httpd-deployment-6754855469-xsnpn         1/1       Running             0          8m
+```
+
+We change edit the state of our deployment with the [edit](https://kubernetes.io/docs/reference/generated/kubectl/kubectl-commands#edit) command.
 
