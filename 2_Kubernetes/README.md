@@ -27,6 +27,14 @@ Developers can get access to kubectl either through the GCP console or locally o
     gcloud container clusters get-credentials <cluster_name>
     ```
 
+Create a fierewall rule for your load balancer
+1. Compute Engine > VM Instances
+2. Select one of your instances
+3. Search for a `network tag` and keep that for latter
+4. Create a new firewall rule (VPC Networking -> Firewall Rules)
+5. Set `Target tags` to the tag your copied before
+6. Allow allow source IPs ranges of `130.211.0.0/22` and `35.191.0.0/16`
+
 ```
 $ kube get nodes
 NAME                                                 STATUS    ROLES     AGE       VERSION
