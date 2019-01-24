@@ -26,6 +26,7 @@ Developers can get access to kubectl either through the GCP console or locally o
     ```
     gcloud container clusters get-credentials <cluster_name>
     ```
+
 ```
 $ kube get nodes
 NAME                                                 STATUS    ROLES     AGE       VERSION
@@ -75,6 +76,7 @@ NAME         READY     STATUS    RESTARTS   AGE
 myfirstpod   2/2       Running   0          2m
 ```
 We can see all of the details about our pod with the [describe](https://kubernetes.io/docs/reference/generated/kubectl/kubectl-commands#describe) command.
+
 ```
 $ kubectl describe pod myfirstpod
 
@@ -148,7 +150,7 @@ Events:
   Normal  Pulled     5m    kubelet, gke-internal-24g-cluster-high-memory-d13e8c99-0scz  Successfully pulled image "centos"
   Normal  Created    5m    kubelet, gke-internal-24g-cluster-high-memory-d13e8c99-0scz  Created container
   Normal  Started    5m    kubelet, gke-internal-24g-cluster-high-memory-d13e8c99-0scz  Started container
-  ```
+```
 Notice the IP address of the pod, we'll need that for later.
 
 We have two contianers running in our pod, one of them is a webserver but this pod isn't exposed to the internet yet so we need the other *spectator* container to view the web page. Let's get a shell in the spectator container
