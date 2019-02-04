@@ -8,8 +8,8 @@ app.use('/static', express.static(path.join(__dirname, "html/static")));
 app.get('/', route);
 
 app.get('/cpu', (req,res,next)=>{
-  let x = .00001;
-  for(i = 0; i <= 10000000; i++){
+  let x = .0000001;
+  for(i = 0; i <= 100000000; i++){
     Math.sqrt(x);
   }
   res.send('OK');
