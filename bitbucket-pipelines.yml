@@ -33,7 +33,7 @@ pipelines:
           image: lachlanevenson/k8s-kubectl
           deployment: production
           script:
-            - source export.env
+            - source 2_Kubernetes/finished_cake/export.env
             - echo $KUBE_TOKEN | base64 -d > ./kube_token
             - echo $KUBE_CA | base64 -d > ./kube_ca
             - kubectl config set-cluster gke-internal --server https://35.202.245.182 --certificate-authority="$(pwd)/kube_ca"
