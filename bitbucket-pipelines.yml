@@ -38,7 +38,7 @@ pipelines:
             - echo $KUBE_CA | base64 -d > ./kube_ca
             - kubectl config set-cluster gke-internal --server https://35.202.245.182 --certificate-authority="$(pwd)/kube_ca"
             - kubectl config set-credentials bitbucket --token="$(cat ./kube_token)"
-            - kubectl config set-context development --cluster=gke-internal --user=bitbucket --namespace=bowling-production
+            - kubectl config set-context development --cluster=gke-internal --user=bitbucket --namespace=tegoesports
             - kubectl config use-context development
             - kubectl set image deployment/$DEPLOYMENT_NAME $CONTAINER_NAME=$IMAGE_NAME
       
