@@ -14,7 +14,7 @@ pipelines:
             - cd 2_Kubernetes/finished_cake/
             - npm install
           artifacts:
-            - node_modules/**
+            - 2_Kubernetes/finished_cake/node_modules/**
       - step:
           caches:
             - docker
@@ -27,7 +27,7 @@ pipelines:
             - docker push $IMAGE_NAME
             - echo "export IMAGE_NAME=$IMAGE_NAME" > export.env
           artifacts:
-            - export.env
+            - 2_Kubernetes/finished_cake/export.env
       - step: 
           name: Deploy to production
           image: lachlanevenson/k8s-kubectl
