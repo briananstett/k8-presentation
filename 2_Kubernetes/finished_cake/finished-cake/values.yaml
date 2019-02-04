@@ -1,0 +1,47 @@
+# Default values for 1698_bowling_leagues.
+# This is a YAML-formatted file.
+# Declare variables to be passed into your templates.
+
+replicaCount: 1
+
+image:
+  repository: gcr.io/g-1575-internal-projects/k8-24g-workshop
+  tag: v1
+  pullPolicy: IfNotPresent
+
+annotations:
+  repository: https://bitbucket.org/briananstett/k8-24g-workshop
+
+labels:
+  enddate: ongoing
+  project: k8-24g-workshop
+  environment: development
+
+service:
+  type: ClusterIP
+  port: 80
+
+container:
+  port: 3000
+
+resource:
+  cpu:
+    requests: 150m
+    limits: 250m
+  memory:
+    requests: 128Mi
+    limits: 200Mi
+
+readinessProbe:
+  initialDelaySeconds: 2
+
+livenessProbe:
+  initialDelaySeconds: 30
+
+
+hpa:
+  min: 1
+  max: 10
+
+ingress:
+  class: nginx

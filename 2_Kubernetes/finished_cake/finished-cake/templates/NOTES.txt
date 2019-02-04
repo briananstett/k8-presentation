@@ -1,0 +1,17 @@
+Thank you for installing {{ .Chart.Name }}.
+
+Your release is named {{ .Release.Name }}.
+
+To learn more about the release, try:
+
+  $ helm status {{ .Release.Name }}
+  $ helm get {{ .Release.Name }}
+
+To get the service account's ca.crt and token run:
+  $ kubectl get secrets --namespace {{.Release.Namespace}}
+
+Then find the secret for your service account and run:
+  $ kuebctl get secret <service-account's secret> -o yaml
+
+To get the service's nodePort run:
+  $ echo $(kube get service {{ .Release.Name }}-service -o jsonpath="{.spec.ports[0].nodePort}")\n

@@ -1,0 +1,44 @@
+# enable Docker for your repository
+options:
+  docker: true
+
+pipelines:
+  branches:
+    master:
+      - step:
+          caches:
+            - node
+          name: Install Dependencies
+          image: node:10-alpine
+          script:
+            - cd 2_Kubernetes/finished_cake/
+            - npm install
+          artifacts:
+            - node_modules/**
+      - step:
+          caches:
+            - docker
+          name: Create Image, push to registry
+          script: # Modify the commands below to build your repository.
+            - cd 2_Kubernetes/finished_cake/
+            - export IMAGE_NAME=gcr.io/$GCLOUD_PROJECT/$BITBUCKET_REPO_SLUG:$BITBUCKET_COMMIT
+            - docker build -t $IMAGE_NAME  .
+            - docker login -u _json_key -p "$GCR_KEY" https://gcr.io
+            - docker push $IMAGE_NAME
+            - echo "export IMAGE_NAME=$IMAGE_NAME" > export.env
+          artifacts:
+            - export.env
+      - step: 
+          name: Deploy to production
+          image: lachlanevenson/k8s-kubectl
+          deployment: production
+          script:
+            - source export.env
+            - echo $KUBE_TOKEN | base64 -d > ./kube_token
+            - echo $KUBE_CA | base64 -d > ./kube_ca
+            - kubectl config set-cluster gke-internal --server https://35.202.245.182 --certificate-authority="$(pwd)/kube_ca"
+            - kubectl config set-credentials bitbucket --token="$(cat ./kube_token)"
+            - kubectl config set-context development --cluster=gke-internal --user=bitbucket --namespace=bowling-production
+            - kubectl config use-context development
+            - kubectl set image deployment/$DEPLOYMENT_NAME $CONTAINER_NAME=$IMAGE_NAME
+      
