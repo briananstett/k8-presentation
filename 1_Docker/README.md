@@ -1,5 +1,5 @@
 # 1. Docker
-[Docker](https://docs.docker.com/) is one of the most popular container runtimes we use at 24G. 
+[Docker](https://docs.docker.com/) is one of the most popular container runtimes and the onewe use at 24G. See this [article](https://www.docker.com/resources/what-container) for more information about what a container is.
 #### Table of Contents
 * [Installation](#installation)
 * [Dockerfile](#dockerfile)
@@ -8,6 +8,9 @@
 * [Persistent Storage](#persistent-storage)
 * [Container Management](#Container-Management)
 
+## Prerequisites
+* [gcloud](https://cloud.google.com/sdk/install) is installed
+
 ## Installation
 * [Install Docker for Ubuntu](https://docs.docker.com/install/linux/docker-ce/ubuntu/)
 * [Install Docker for CentOS](https://docs.docker.com/install/linux/docker-ce/centos/)
@@ -15,7 +18,8 @@
 
 ---
 ## Dockerfile and Images
-*For this section use `1_FirstContainer`*
+*For this section use, `1_FirstContainer`*
+"Images are the recipe, a container is the cake." For more indepth information about images, see [this article](https://docs.docker.com/v17.09/engine/userguide/storagedriver/imagesandcontainers/).
 
 Docker builds images by reading the instructions from a `Dockerfile`. A `Dockerfile` is a text document that contains all the commands a user could call on the command line to assemble an image. Think of a Docker image as *class* in object oriented programming, from which we can instantiate our continers from. 
 
@@ -44,7 +48,7 @@ ENV PORT=3000
 CMD npm start
 
 ```
-A key concept to is what `Dockerfile keywords` run during the build step and runtime. From the example above, all the instructions *expect* `CMD`/`ENTRYPOINT` run once during the build. The only instructions that is used during runtime is the last instruction `CMD` which tells Docker which executable to run when the container starts.
+A key concept about `Dockerfiles`, is what `Dockerfile keywords` run during the build step vs runtime. From the example above, all the instructions *expect* `CMD`/`ENTRYPOINT` run just during the build. One the image was created, those commands will never be executed again. The only instructions above that is used during runtime is the last instruction, `CMD`,  which tells Docker the executable to run when the container starts.
 
 From within the `1_FirstContainer` direcotry... 
 ### Build the Image
@@ -52,7 +56,7 @@ From within the `1_FirstContainer` direcotry...
 // docker build -t <name of the image>:<optional tag> <Dockerfile location>
 $ docker build -t myimage:v1 .
 ```
-We can see al Docker images on our machine with [docker images](https://docs.docker.com/engine/reference/commandline/images/)
+Once the image finishes building, we can see all Docker images on our machine with [docker images](https://docs.docker.com/engine/reference/commandline/images/), one of which was the image we just made.
 ```
 $ docker images
 REPOSITORY                TAG             IMAGE ID            CREATED             SIZE
@@ -61,11 +65,11 @@ myimages                  v1              22fd13a039d0        Just Now          
 ---
 
 ## Running a container
-[docker run](https://docs.docker.com/engine/reference/run/) command is used to create a container. There are *many* flags and options associated with this command but for this example we will cover the basics. Please see [reference](https://docs.docker.com/engine/reference/run/) for guidance.
+The [docker run](https://docs.docker.com/engine/reference/run/) command is used to create a container. There are *many* flags and options associated with this command but for this example we will cover the basics. Please see [reference](https://docs.docker.com/engine/reference/run/) for guidance.
 
 There are two main ways to run a container. In `Foreground mode` or in `Detached mode`.
 
-[Foreground](https://docs.docker.com/engine/reference/run/#foreground) mode starts a process in a container and attaches  the console to the process's standard input, output, and standard error. We can create a tty for the container and keep STDIN open with the `-it` flags. The big take away is that the `-i` flag keeps the `STDIN` open even after execution of the entry command.
+[Foreground](https://docs.docker.com/engine/reference/run/#foreground) mode starts a process in a container and attaches the console to the process's standard input, output, and standard error. We can create a tty for the container and keep STDIN open with the `-it` flags. The big take away is that the `-i` flag keeps the `STDIN` open even after execution of the entry command.
 
 ```
 docker run -it -p 3000:3000 <image>:<option tag> <optional command>
@@ -75,7 +79,7 @@ We can start our Node server and attach to it with the following command
 ```
 docker run -it  -p 3000:3000 us.gcr.io/g-1575-internal-projects/myImage:v1
 ```
-This starts the server and we can see the logs as requests come through. It however is important to note that we are attached to the container's main executable process and with kill (-9) the process, the container will stop and we will get kicked out.
+This starts the server and we can see the logs as requests come through. It however is important to note that we are attached to the container's main executable process and we kill (-9) the process, the container itself will stop and we will get kicked out.
 
 ```
 // Inside container
@@ -89,20 +93,20 @@ Request from ::1
 // Container killed
 ```
 
-We can override the container's `CMD` instruction by start the container with our own executable
+We can override the container's `CMD` instruction by starting the container with our own executable
 ```
 docker run -it  us.gcr.io/g-1575-internal-projects/myImage:v1 /bin/sh
 ```
-This command will start a new container, but this time will just have a shell as the container's main process. We can now navigate the containe's filesytem and spawn child processes, even our node server.
+This command will start a new container, but this time, will just have a shell as the container's main process (not `npm start` which was defined in the Dockerfile). We can now navigate the containe's filesytem and spawn child processes, even our node server.
 
-[Detached](https://docs.docker.com/engine/reference/run/#detached--d) mode starts a container the background and will exit when the root process used to tun the container exits. This is contrast to running a container with the `-i` flag which leave `STDIN` open even after completion of the root process. Because the container will stop if the root process exits in a *detached* container, the root process must be run in the foreground of the container.
+[Detached](https://docs.docker.com/engine/reference/run/#detached--d) mode starts a container the background and will exit when the root process used to run the container exits. This is in contrast to running a container with the `-i` flag which leave `STDIN` open even after completion of the root process. Because the container will stop if the root process exits in a *detached* container, the root process must always run in the foreground of the container.
 
 ```
 docker run -d -p 80:80 httpd apachectl -D FOREGROUND 
 ```
 
 ### Exposing Ports on Host Machine
-By default, each container has its own IP address and can be accessed from the host machine. If you would like to access a container from outside of the host machine, you need to [expose](https://docs.docker.com/engine/reference/run/#expose-incoming-ports) the port on the host machine that maps to the port on container. 
+By default, each container has its own IP address and can be accessed from the host machine only. We tell Docker the container listens on a specific port with the [expose](https://docs.docker.com/engine/reference/builder/#expose) Dockerfile keyword. *But this instruction does not actually publish the port. It functions as a type of documentation between the person who builds the image and the person who runs the container, about which ports are intended to be published*. If you would like to access a container from outside of the host machine, you need to [publish](https://docs.docker.com/engine/reference/run/#expose-incoming-ports) a port on the host machine that maps to a port on container. 
 
 `-p` is used to provide specific mappings
 ```
@@ -119,8 +123,10 @@ By default, each container has its own IP address and can be accessed from the h
 
 EXPOSE 80
 ```
+
+
 ```
-// Docker run
+// Docker run with -P
 brian@BrianDesktop:~$ docker run -d -P httpd
 ```
 ```
@@ -130,8 +136,21 @@ CONTAINER ID        IMAGE               COMMAND              CREATED            
 d8d3bcac214b        httpd               "httpd-foreground"   4 seconds ago       Up 2 seconds        0.0.0.0:32768->80/tcp   cranky_jackson
 ```
 
+
+```
+// Docker run with -p
+brian@BrianDesktop:~$ docker run -d -p 8080:80 httpd
+```
+```
+// Docker ps
+brian@BrianDesktop:~$ docker ps
+CONTAINER ID        IMAGE               COMMAND              CREATED             STATUS              PORTS                   NAMES
+d8d3bcac214b        httpd               "httpd-foreground"   4 seconds ago       Up 2 seconds        0.0.0.0:8080->80/tcp   cranky_jackson
+```
+
+
 ### Naming your containers
-By default, Docker file randomly assign you containers a human friendly name. If you wish to name your containers, you can with the [--name](https://docs.docker.com/engine/reference/run/#container-identification) flag of the `docker run` command
+By default, Docker randomly assigns your containers a human friendly name. If you wish to name your containers, you can with the [--name](https://docs.docker.com/engine/reference/run/#container-identification) flag of the `docker run` command
 
 ```
 brian@BrianDesktop:~$ docker run -d -P --name dockerIsCool httpd
@@ -148,7 +167,7 @@ d6a568e8ea6a        httpd               "httpd-foreground"   3 seconds ago      
 
 [docker push](https://docs.docker.com/engine/reference/commandline/push/) is used to push an image to registry.
 
-For this example, we've already created a *public* registry so no credentials are required. Almost all other 24G images are private are [require credentials to access](https://docs.docker.com/engine/reference/commandline/login/).
+For this example, we've already created a *public* registry so no credentials are required. Almost all other 24G images are private and [require credentials to access](https://docs.docker.com/engine/reference/commandline/login/).
 
 To create a container registry, navigaate to GCP > Container Registry and *Enable API*. By default, GCP container registries are private so we have to signin.
 
@@ -163,16 +182,15 @@ First we need to re-tag our image we made in the last step in order to *push* ou
 // us.gcr.io/j-1794/activation2/:v1
 ```
 
-To use our registry we have follow a certain image name pattern. Lets tag our earlier image.
+To use our public registry, we have to follow a certain image name pattern. Let's tag our earlier image.
 ```
 // us.gcr.io/projectName/imageName:tag
-$ docker tag myimage:v1 gcr.io/<project id>/myimage:v1
+$ docker tag myimage:v1 us.gcr.io/<project id>/myimage:v1
 ```
 Finally, push your image to the public registry.
 ```
-docker push myimage:v1 gcr.io/<project id>/myimage:v1
+docker push myimage:v1 us.gcr.io/<project id>/myimage:v1
 ```
-
 
 ### Pull an Image
 Once a Docker image is hosted in a registry, we can pull down that image to our workstation or server.
@@ -181,14 +199,17 @@ Once a Docker image is hosted in a registry, we can pull down that image to our 
 ```
 docker pull us.gcr.io/<>/myImage:v1
 ```
+
+For more information about image tagging, push, and pulling from GCP's container registry, see [this article](https://cloud.google.com/container-registry/docs/pushing-and-pulling).
 ---
 ## Mapping Host Devices Into a Container
 *For this section use `2_MappingExternalDevices`*
 
-It is possible with Docker to "mount" or "map" a device on the host machine into a container. Use the [--device](https://docs.docker.com/engine/reference/commandline/run/#add-host-device-to-container---device) flag of the `docker run` command. This would be helpful for number of reasons (IoT, local development, PnP, etc.)
+It is possible with Docker to "mount" or "map" a device on the host machine into a container. Use the [--device](https://docs.docker.com/engine/reference/commandline/run/#add-host-device-to-container---device) flag of the `docker run` command. This is helpful for number of reasons (IoT, local development, PnP, etc.)
 
-By default, `--device` using the same destination device file as the source.
+By default, `--device` uses the same destination device file as the source.
 ```
+//                   =/device/file/on/host mounts to the same destination on the container
 $ docker run --device=/dev/sda --rm -it ubuntu fdisk  /dev/sda
 ```
 
@@ -212,7 +233,7 @@ $ ./listDevices.sh
 /dev/input/event6 - Logitech_USB_Receiver
 ```
 
-Finally, start a new container with the image we created and map the <TODO> board into it.
+Finally, start a new container with the image we created and map the board into it.
 
 ```
 $ docker run --device=/dev/sda --rm -id johnny:v1
@@ -223,13 +244,14 @@ We should now start to see the LED blink.
 ## Persistent Storage
 *For this section use `3_PersistentStorage`*
 
-By default all files created inside a container are stored on a writable container layer. They will be lost when the container is deleted from the host machine. There are two types of main storage mechanisms we use at 24G, [volumes](https://docs.docker.com/storage/volumes/), and [bind mounts](https://docs.docker.com/storage/bind-mounts/). 
+By default all files created inside a container are stored on a writable container layer. They will be lost when the container is deleted from the host machine. Although, there are multiple options for persistent storage, you will primarily use [volumes](https://docs.docker.com/storage/volumes/), and [bind mounts](https://docs.docker.com/storage/bind-mounts/). 
 
 1. [volumes](https://docs.docker.com/storage/volumes/) are a storage device completely managed by Docker. Docer volumes reside on the host's filesystem at `/var/lib/docker/volumes`. We use the [--mount](https://docs.docker.com/storage/volumes/#choose-the--v-or---mount-flag) flag on `docker run` to configure persistent storage.
 
 ![](./images/volume.png)
 
 `Anonymous volumes` will be created automatically on your behalf if you don't specify a source volume.
+
 
 ```
 $ docker run -it --name storagetest --mount type=volume,dst=/tmp/fooBar centos /bin/bash
@@ -393,7 +415,7 @@ We can use the `docker ps -a` command to get the the Container ID of a stopped c
 ```
 $ docker ps -a
 CONTAINER ID     IMAGE             COMMAND                  CREATED         STATUS                       PORTS      NAMES
-426762011d86     broken-image:v1   "/bin/sh -c 'npm staâ€¦"   3 minutes ago   Exited (254) 3 minutes ago              keen_northcutt
+426762011d86     broken-image:v1   "/bin/sh -c 'npm sta…"   3 minutes ago   Exited (254) 3 minutes ago              keen_northcutt
 ```
 
 Then get the logs from the stopped container.
@@ -438,7 +460,7 @@ f328ba89a889d897bc950dcc3fcd76d9ec853045a46c1598f9e501cd41c40cad
 
 $docker ps
 CONTAINER ID    IMAGE               COMMAND                  CREATED         STATUS         PORTS                    NAMES
-f328ba89a889    broken-image:v2     "/bin/sh -c 'npm staâ€¦"   2 seconds ago   Up 2 seconds   0.0.0.0:3000->3000/tcp   jolly_clarke
+f328ba89a889    broken-image:v2     "/bin/sh -c 'npm sta…"   2 seconds ago   Up 2 seconds   0.0.0.0:3000->3000/tcp   jolly_clarke
 ```
 ![](./4_ContainerManagement/html/static/images/broken.png)
 For some reason, the page isn't full screen. Let's get into the container and checkout the html. We can start a shell as a new process in the container with the [docker exec](https://docs.docker.com/engine/reference/commandline/exec/).
