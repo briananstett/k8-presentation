@@ -18,52 +18,57 @@ In the era of cloud and cluster computing, [Containers](https://www.docker.com/r
 
 
 ## Prerequisites
-1. Install and config GCP's CLI SDK. If you already have `gcloud` installed, skip to step 3
-    1. If you don't have `gcloud` installed on your machine
-        1. [Linux, Windows, Mac installation docs](https://cloud.google.com/sdk/docs/quickstarts)
-        1. Init
-            ```
-            $ gcloud init
-            ```
-        1. Authenticate `gcloud`
-            ```
-            To continue, you must log in. Would you like to log in (Y/n)? Y
-            ```
-        1. (Optinal) if at any time you are prompted to specify a default region, use `us-central1-a`
-        1. Select your project. Please use project `g-1575-k8-workshop` 
-            ```
-            Pick cloud project to use: 
-            [1] analog-button-209715
-            [2] analog-memento-238217
-            Please enter numeric choice
-            ```
-    1. If you already have `gcloud` installed on your machine
-        1. Init
-            ```
-            $ gcloud init
-            ```
-        1. (Optinal) if at any time you are prompted to specify a default region, use `us-central1-a`
-        1. Add a new configuration
-            ```
-            Pick configuration to use:
-            [1] Re-initialize this configuration [default] with new settings 
-            [2] Create a new configuration
-            Please enter your numeric choice:  
-            ```
-        1. Enter a name of the new configuration
-            ```
-            Enter configuration name. Names start with a lower case letter and 
-            contain only lower case letters a-z, digits 0-9, and hyphens '-':
-            ```
-        1. Select your project. Please use project `g-1575-k8-workshop` 
-            ```
-            Choose the account you would like to use to perform operations for 
-            this configuration:
-            [1] 477597344109-compute@developer.gserviceaccount.com
-            [2] brian.anstett@24g.com
-            [3] Log in with a new account
-            Please enter your numeric choice:  
-            ```
+---
+
+### Install and config GCP's CLI SDK. 
+If you don't have `gcloud` installed on your machine
+1. [Linux, Windows, Mac installation docs](https://cloud.google.com/sdk/docs/quickstarts)
+
+Init
+```
+$ gcloud init
+```
+Authenticate `gcloud`
+```
+To continue, you must log in. Would you like to log in (Y/n)? Y
+```
+(Optinal) if at any time you are prompted to specify a default region, use `us-central1-a`
+
+Select your project. Please use project `g-1575-k8-workshop` 
+```
+Pick cloud project to use: 
+[1] analog-button-209715
+[2] analog-memento-238217
+Please enter numeric choice
+```
+
+1. If you already have `gcloud` installed on your machine
+Init
+```
+$ gcloud init
+```
+(Optinal) if at any time you are prompted to specify a default region, use `us-central1-a`
+Add a new configuration
+```
+Pick configuration to use:
+[1] Re-initialize this configuration [default] with new settings 
+[2] Create a new configuration
+Please enter your numeric choice:  
+```
+Enter a name of the new configuration
+```
+Enter configuration name. Names start with a lower case letter and 
+contain only lower case letters a-z, digits 0-9, and hyphens '-':
+```
+Select your project. Please use project `g-1575-k8-workshop` 
+```
+Choose the account you would like to use to perform operations for 
+this configuration:
+[1] 477597344109-compute@developer.gserviceaccount.com
+[2] brian.anstett@24g.com
+[3] Log in with a new account
+Please enter your numeric choice:  
+```
 
 1. Install Docker
     1. [Linux](https://docs.docker.com/install/linux/docker-ce/centos/)
