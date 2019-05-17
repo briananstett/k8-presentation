@@ -8,7 +8,7 @@ metadata:
     kubernetes.io/ingress.class: "nginx"
 spec:
   rules:
-  - host: external3.tegoesports.com
+  - host: dev-2171.crowdplaysport.com
     http:
       paths:
       - backend:
