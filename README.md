@@ -99,7 +99,7 @@ $ docker version
     Built:            Wed Jan  9 19:02:44 2019
     OS/Arch:          linux/amd64
     Experimental:     false
-  ```
+```
 
 ### Setup Authentication to Google Container Registry
 Add a Docker credential helper
