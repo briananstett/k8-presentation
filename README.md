@@ -70,55 +70,55 @@ In the era of cloud and cluster computing, [Containers](https://www.docker.com/r
     1. [Mac](https://docs.docker.com/docker-for-mac/install/)
     1. [Windows](https://docs.docker.com/docker-for-windows/install/)
     1. Confirm Docker is working on your machine
-    ```
-    $ docker version
-      Client:
-      Version:           18.09.1
-      API version:       1.39
-      Go version:        go1.10.6
-      Git commit:        4c52b90
-      Built:             Wed Jan  9 19:35:31 2019
-      OS/Arch:           linux/amd64
-      Experimental:      false
+        ```
+        $ docker version
+          Client:
+          Version:           18.09.1
+          API version:       1.39
+          Go version:        go1.10.6
+          Git commit:        4c52b90
+          Built:             Wed Jan  9 19:35:31 2019
+          OS/Arch:           linux/amd64
+          Experimental:      false
 
-      Server: Docker Engine - Community
-      Engine:
-        Version:          18.09.1
-        API version:      1.39 (minimum version 1.12)
-        Go version:       go1.10.6
-        Git commit:       4c52b90
-        Built:            Wed Jan  9 19:02:44 2019
-        OS/Arch:          linux/amd64
-        Experimental:     false
-    ```
+          Server: Docker Engine - Community
+          Engine:
+            Version:          18.09.1
+            API version:      1.39 (minimum version 1.12)
+            Go version:       go1.10.6
+            Git commit:       4c52b90
+            Built:            Wed Jan  9 19:02:44 2019
+            OS/Arch:          linux/amd64
+            Experimental:     false
+          ```
     ### Trouble Shooting
     * Is the Docker Daemon running?
         * Linux
-        ```
-        $ systemctl start docker
-        ```
+            ```
+            $ systemctl start docker
+            ```
         * Windows
             * Launch `Docker Desktop`
 
 1. Setup Authentication to Google Container Registry
-    ```
-    $ gcloud auth configure-docker
-    gcloud's Docker credential helper can be configured but it will not work until this is corrected.
-    The following settings will be added to your Docker config file 
-    located at [/root/.docker/config.json]:
-    {
-      "credHelpers": {
-        "gcr.io": "gcloud", 
-        "us.gcr.io": "gcloud", 
-        "eu.gcr.io": "gcloud", 
-        "asia.gcr.io": "gcloud", 
-        "staging-k8s.gcr.io": "gcloud", 
-        "marketplace.gcr.io": "gcloud"
+      ```
+      $ gcloud auth configure-docker
+      gcloud's Docker credential helper can be configured but it will not work until this is corrected.
+      The following settings will be added to your Docker config file 
+      located at [/root/.docker/config.json]:
+      {
+        "credHelpers": {
+          "gcr.io": "gcloud", 
+          "us.gcr.io": "gcloud", 
+          "eu.gcr.io": "gcloud", 
+          "asia.gcr.io": "gcloud", 
+          "staging-k8s.gcr.io": "gcloud", 
+          "marketplace.gcr.io": "gcloud"
+        }
       }
-    }
 
-    Do you want to continue (Y/n)?  
-    ```
+      Do you want to continue (Y/n)?  
+      ```
 
 1. Set up `kubectl`
     1. Install `kubectl`
@@ -127,21 +127,22 @@ In the era of cloud and cluster computing, [Containers](https://www.docker.com/r
         1. [Windows Installation](https://kubernetes.io/docs/tasks/tools/install-kubectl/#install-kubectl-on-windows)
     1. Configure `kubectl`
         1. List the Kubernetes clusters in your project
-            ```
-            gcloud container clusters list
-            NAME              LOCATION       MASTER_VERSION  MASTER_IP      MACHINE_TYPE   NODE_VERSION   NUM_NODES  STATUS
-            gke-24g-workshop  us-central1-a  1.12.7-gke.10   35.184.96.245  n1-standard-4  1.12.7-gke.10  2          RUNNING
-            ```
+          ```
+          gcloud container clusters list
+          NAME              LOCATION       MASTER_VERSION  MASTER_IP      MACHINE_TYPE   NODE_VERSION   NUM_NODES  STATUS
+          gke-24g-workshop  us-central1-a  1.12.7-gke.10   35.184.96.245  n1-standard-4  1.12.7-gke.10  2          RUNNING
+          ```
         1. Get your token and certificate authority for your user
-            ```
-            gcloud container clusters get-credentials gke-24g-workshop
-            ```
-        1. confirm set up was 
-            ```
-            kubectl get nodes
-            NAME                                              STATUS   ROLES    AGE     VERSION
-            gke-gke-24g-workshop-default-pool-2d9d42c6-1vxp   Ready    <none>   3m41s   v1.12.7-gke.10
-            gke-gke-24g-workshop-default-pool-a4b67bed-zxhb   Ready    <none>   3m37s   v1.12.7-gke.10
-            ```
+          ```
+          gcloud container clusters get-credentials gke-24g-workshop
+          ```
+
+        1. confirm set up was
+          ```
+          kubectl get nodes
+          NAME                                              STATUS   ROLES    AGE     VERSION
+          gke-gke-24g-workshop-default-pool-2d9d42c6-1vxp   Ready    <none>   3m41s   v1.12.7-gke.10
+          gke-gke-24g-workshop-default-pool-a4b67bed-zxhb   Ready    <none>   3m37s   v1.12.7-gke.10
+          ```
 ## Slides
 * Feel free to follow along with [the slides](https://docs.google.com/presentation/d/1OQYcl3PwPM9NJ3AbExLV9A8AWbCEzbxj0VceIOhPnyY/edit#slide=id.p).
