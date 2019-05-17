@@ -8,7 +8,7 @@ In the era of cloud and cluster computing, [Containers](https://www.docker.com/r
 * We've implemented multiple [operators](https://kubernetes.io/docs/concepts/extend-kubernetes/api-extension/custom-resources/) on top of Kubernetes that automate tasks such as [SSL certification registrion](https://github.com/jetstack/cert-manager) and the creation of [DNS entries](https://github.com/helm/charts/tree/master/stable/external-dns).
 
 ## Next workshop
-* Mon May 20, 2019 12:30pm â€“ 2pm (EDT) â€“ Thunderbird 2
+* Mon May 20, 2019 12:30pm – 2pm (EDT) – Thunderbird 2
 
 ## Table of Contents
 1. [Prerequisites](#prerequisites)
@@ -17,45 +17,58 @@ In the era of cloud and cluster computing, [Containers](https://www.docker.com/r
 1. [Kubernetes](./2_Kubernetes/README.md)
 
 
-## Prerequisites <a name="prerequisites"></a>
+## Prerequisites
 1. Install and config GCP's CLI SDK. If you already have `gcloud` installed, skip to step 3
     1. If you don't have `gcloud` installed on your machine
         1. [Linux, Windows, Mac installation docs](https://cloud.google.com/sdk/docs/quickstarts)
         1. Init
+        
             ```
             $ gcloud init
             ```
+            
         1. Authenticate `gcloud`
+        
             ```
             To continue, you must log in. Would you like to log in (Y/n)? Y
             ```
+            
         1. (Optinal) if at any time you are prompted to specify a default region, use `us-central1-a`
         1. Select your project. Please use project `g-1575-k8-workshop` 
+        
             ```
-            Pick cloud project to use: 
+            Pick cloud project to use:
             [1] analog-button-209715
             [2] analog-memento-238217
             Please enter numeric choice
             ```
+            
     1. If you already have `gcloud` installed on your machine
         1. Init
+        
             ```
             $ gcloud init
             ```
+            
         1. (Optinal) if at any time you are prompted to specify a default region, use `us-central1-a`
         1. Add a new configuration
+        
             ```
             Pick configuration to use:
             [1] Re-initialize this configuration [default] with new settings 
             [2] Create a new configuration
             Please enter your numeric choice:  
             ```
+            
         1. Enter a name of the new configuration
+        
             ```
             Enter configuration name. Names start with a lower case letter and 
             contain only lower case letters a-z, digits 0-9, and hyphens '-':
             ```
+            
         1. Select your project. Please use project `g-1575-k8-workshop` 
+        
             ```
             Choose the account you would like to use to perform operations for 
             this configuration:
@@ -91,6 +104,7 @@ In the era of cloud and cluster computing, [Containers](https://www.docker.com/r
         OS/Arch:          linux/amd64
         Experimental:     false
     ```
+    
     ### Trouble Shooting
     * Is the Docker Daemon running?
         * Linux
@@ -101,6 +115,7 @@ In the era of cloud and cluster computing, [Containers](https://www.docker.com/r
             * Launch `Docker Desktop`
 
 1. Setup Authentication to Google Container Registry
+
     ```
     $ gcloud auth configure-docker
     gcloud's Docker credential helper can be configured but it will not work until this is corrected.
