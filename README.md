@@ -40,8 +40,8 @@ To continue, you must log in. Would you like to log in (Y/n)? Y
 Select your project. Please use project `g-1575-k8-workshop` 
 ```
 Pick cloud project to use: 
-[1] analog-button-209715
-[2] analog-memento-238217
+[1] project-1
+[2] project-2
 Please enter numeric choice
 ```
 
@@ -68,7 +68,7 @@ Select your project. Please use project `g-1575-k8-workshop`
 Choose the account you would like to use to perform operations for 
 this configuration:
 [1] 477597344109-compute@developer.gserviceaccount.com
-[2] brian.anstett@24g.com
+[2] john.smith@24g.com
 [3] Log in with a new account
 Please enter your numeric choice:  
 ```
