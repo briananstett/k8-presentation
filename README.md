@@ -1,15 +1,17 @@
 # 24G Container Workshop
 In the era of cloud and cluster computing, [Containers](https://www.docker.com/resources/what-container) have become the standard unit of compute. All major Cloud providers offer some sort of managed container service, not to mention all the services that use containers underneath the hood (App Engine, GCE, etc.). The consistent environment, "run anywhere", context isolation characteristics of containers make them a perfect choice for [Cloud Native](https://pivotal.io/cloud-native) applications. Containers have also fueled to the CI/CD fire, [allowing enterprises to safely iterate](https://cloud.google.com/kubernetes-engine/kubernetes-comic/) their prodcution software at extreme high velocity. 
 
-
+--- 
 ## Kubernetes at 24G
 * We have been running Kubernetes in production for over a year now. We have multiple clusters on multiple clouds and on average have between 200 and 300 containers running at any given momment. 
 * We have CI/CD pipelines that automatically create new Docker images and deploy them to correct cluster. Kubernetes then performs a [Rolling Update](https://kubernetes.io/docs/tutorials/kubernetes-basics/update/update-intro/) to safely delete old instances of the code, replacing them with the new. Kubernetes performs constent health checks and will rollback the previous version if there are issues.
 * We've implemented multiple [operators](https://kubernetes.io/docs/concepts/extend-kubernetes/api-extension/custom-resources/) on top of Kubernetes that automate tasks such as [SSL certification registrion](https://github.com/jetstack/cert-manager) and the creation of [DNS entries](https://github.com/helm/charts/tree/master/stable/external-dns).
 
+--- 
 ## Next workshop
 * Mon May 20, 2019 12:30pm - 2pm (EDT) - Thunderbird 2
 
+---
 ## Table of Contents
 1. [Prerequisites](#prerequisites)
 1. [Slides](#slides)
@@ -21,22 +23,21 @@ In the era of cloud and cluster computing, [Containers](https://www.docker.com/r
 ---
 
 ### Install and config GCP's CLI SDK. 
-*If you don't have `gcloud` installed on your machine*
-1. [Linux, Windows, Mac installation docs](https://cloud.google.com/sdk/docs/quickstarts)
+1 .If you don't have `gcloud` installed on your machine
 
-1. Init
+[Linux, Windows, Mac installation documentation](https://cloud.google.com/sdk/docs/quickstarts)
 
+Initialize the client
 ```
 $ gcloud init
 ```
-3. Authenticate `gcloud`
 
 ```
 To continue, you must log in. Would you like to log in (Y/n)? Y
 ```
-4. (Optinal) if at any time you are prompted to specify a default region, use `us-central1-a`
+(Optinal) if at any time you are prompted to specify a default region, use `us-central1-a`
 
-5. Select your project. Please use project `g-1575-k8-workshop` 
+Select your project. Please use project `g-1575-k8-workshop` 
 ```
 Pick cloud project to use: 
 [1] analog-button-209715
@@ -44,25 +45,25 @@ Pick cloud project to use:
 Please enter numeric choice
 ```
 
-*If you already have `gcloud` installed on your machine*
-1. Init
+1. If you already have `gcloud` installed on your machine
+Initialize the client
 ```
 $ gcloud init
 ```
-2. (Optinal) if at any time you are prompted to specify a default region, use `us-central1-a`
-3. Add a new configuration
+(Optinal) if at any time you are prompted to specify a default region, use `us-central1-a`
+Add a new configuration
 ```
 Pick configuration to use:
 [1] Re-initialize this configuration [default] with new settings 
 [2] Create a new configuration
 Please enter your numeric choice:  
 ```
-4. Enter a name of the new configuration
+Enter a name of the new configuration
 ```
 Enter configuration name. Names start with a lower case letter and 
 contain only lower case letters a-z, digits 0-9, and hyphens '-':
 ```
-5. Select your project. Please use project `g-1575-k8-workshop` 
+Select your project. Please use project `g-1575-k8-workshop` 
 ```
 Choose the account you would like to use to perform operations for 
 this configuration:
@@ -98,16 +99,9 @@ Please enter your numeric choice:
         OS/Arch:          linux/amd64
         Experimental:     false
       ```
-#### Docker Trouble Shooting
-* Is the Docker Daemon running?
-  * Linux
-      ```
-      $ systemctl start docker
-      ```
-  * Windows
-    * Launch `Docker Desktop`
 
 ### Setup Authentication to Google Container Registry
+Add a Docker credential helper
 ```
 $ gcloud auth configure-docker
 
@@ -135,18 +129,19 @@ Do you want to continue (Y/n)?
     1. [Windows Installation](https://kubernetes.io/docs/tasks/tools/install-kubectl/#install-kubectl-on-windows)
 
 1. Configure `kubectl`
-  1. List the Kubernetes clusters in your project
+
+List the Kubernetes clusters in your project
 ```
 gcloud container clusters list
 NAME              LOCATION       MASTER_VERSION  MASTER_IP      MACHINE_TYPE   NODE_VERSION   NUM_NODES  STATUS
 gke-24g-workshop  us-central1-a  1.12.7-gke.10   35.184.96.245  n1-standard-4  1.12.7-gke.10  2          RUNNING
 ```
-    1. Get your token and certificate authority for your user
+Get your token and certificate authority for your user
 ```
 gcloud container clusters get-credentials gke-24g-workshop
 ```
 
-    1. confirm set up was
+confirm set up was
 ```
 kubectl get nodes
 NAME                                              STATUS   ROLES    AGE     VERSION
