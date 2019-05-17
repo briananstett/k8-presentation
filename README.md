@@ -23,7 +23,7 @@ In the era of cloud and cluster computing, [Containers](https://www.docker.com/r
 ---
 
 ### Install and config GCP's CLI SDK. 
-1 .If you don't have `gcloud` installed on your machine
+1. If you don't have `gcloud` installed on your machine
 
 [Linux, Windows, Mac installation documentation](https://cloud.google.com/sdk/docs/quickstarts)
 
