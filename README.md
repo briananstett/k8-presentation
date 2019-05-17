@@ -21,20 +21,22 @@ In the era of cloud and cluster computing, [Containers](https://www.docker.com/r
 ---
 
 ### Install and config GCP's CLI SDK. 
-If you don't have `gcloud` installed on your machine
+*If you don't have `gcloud` installed on your machine*
 1. [Linux, Windows, Mac installation docs](https://cloud.google.com/sdk/docs/quickstarts)
 
-Init
+1. Init
+
 ```
 $ gcloud init
 ```
-Authenticate `gcloud`
+3. Authenticate `gcloud`
+
 ```
 To continue, you must log in. Would you like to log in (Y/n)? Y
 ```
-(Optinal) if at any time you are prompted to specify a default region, use `us-central1-a`
+4. (Optinal) if at any time you are prompted to specify a default region, use `us-central1-a`
 
-Select your project. Please use project `g-1575-k8-workshop` 
+5. Select your project. Please use project `g-1575-k8-workshop` 
 ```
 Pick cloud project to use: 
 [1] analog-button-209715
@@ -42,25 +44,25 @@ Pick cloud project to use:
 Please enter numeric choice
 ```
 
-1. If you already have `gcloud` installed on your machine
-Init
+*If you already have `gcloud` installed on your machine*
+1. Init
 ```
 $ gcloud init
 ```
-(Optinal) if at any time you are prompted to specify a default region, use `us-central1-a`
-Add a new configuration
+2. (Optinal) if at any time you are prompted to specify a default region, use `us-central1-a`
+3. Add a new configuration
 ```
 Pick configuration to use:
 [1] Re-initialize this configuration [default] with new settings 
 [2] Create a new configuration
 Please enter your numeric choice:  
 ```
-Enter a name of the new configuration
+4. Enter a name of the new configuration
 ```
 Enter configuration name. Names start with a lower case letter and 
 contain only lower case letters a-z, digits 0-9, and hyphens '-':
 ```
-Select your project. Please use project `g-1575-k8-workshop` 
+5. Select your project. Please use project `g-1575-k8-workshop` 
 ```
 Choose the account you would like to use to perform operations for 
 this configuration:
@@ -70,84 +72,86 @@ this configuration:
 Please enter your numeric choice:  
 ```
 
-1. Install Docker
-    1. [Linux](https://docs.docker.com/install/linux/docker-ce/centos/)
-    1. [Mac](https://docs.docker.com/docker-for-mac/install/)
-    1. [Windows](https://docs.docker.com/docker-for-windows/install/)
-    1. Confirm Docker is working on your machine
-        ```
-        $ docker version
-          Client:
-          Version:           18.09.1
-          API version:       1.39
-          Go version:        go1.10.6
-          Git commit:        4c52b90
-          Built:             Wed Jan  9 19:35:31 2019
-          OS/Arch:           linux/amd64
-          Experimental:      false
+### Install Docker
+1. [Linux](https://docs.docker.com/install/linux/docker-ce/centos/)
+1. [Mac](https://docs.docker.com/docker-for-mac/install/)
+1. [Windows](https://docs.docker.com/docker-for-windows/install/)
+1. Confirm Docker is working on your machine
+    ```
+    $ docker version
+      Client:
+      Version:           18.09.1
+      API version:       1.39
+      Go version:        go1.10.6
+      Git commit:        4c52b90
+      Built:             Wed Jan  9 19:35:31 2019
+      OS/Arch:           linux/amd64
+      Experimental:      false
 
-          Server: Docker Engine - Community
-          Engine:
-            Version:          18.09.1
-            API version:      1.39 (minimum version 1.12)
-            Go version:       go1.10.6
-            Git commit:       4c52b90
-            Built:            Wed Jan  9 19:02:44 2019
-            OS/Arch:          linux/amd64
-            Experimental:     false
-          ```
-    ### Trouble Shooting
-    * Is the Docker Daemon running?
-        * Linux
-            ```
-            $ systemctl start docker
-            ```
-        * Windows
-            * Launch `Docker Desktop`
-
-1. Setup Authentication to Google Container Registry
+      Server: Docker Engine - Community
+      Engine:
+        Version:          18.09.1
+        API version:      1.39 (minimum version 1.12)
+        Go version:       go1.10.6
+        Git commit:       4c52b90
+        Built:            Wed Jan  9 19:02:44 2019
+        OS/Arch:          linux/amd64
+        Experimental:     false
       ```
-      $ gcloud auth configure-docker
-      gcloud's Docker credential helper can be configured but it will not work until this is corrected.
-      The following settings will be added to your Docker config file 
-      located at [/root/.docker/config.json]:
-      {
-        "credHelpers": {
-          "gcr.io": "gcloud", 
-          "us.gcr.io": "gcloud", 
-          "eu.gcr.io": "gcloud", 
-          "asia.gcr.io": "gcloud", 
-          "staging-k8s.gcr.io": "gcloud", 
-          "marketplace.gcr.io": "gcloud"
-        }
-      }
-
-      Do you want to continue (Y/n)?  
+#### Docker Trouble Shooting
+* Is the Docker Daemon running?
+  * Linux
       ```
+      $ systemctl start docker
+      ```
+  * Windows
+    * Launch `Docker Desktop`
 
-1. Set up `kubectl`
-    1. Install `kubectl`
-        1. [Linux Installation](https://kubernetes.io/docs/tasks/tools/install-kubectl/#install-kubectl-on-linux)
-        1. [Mac Installation](https://kubernetes.io/docs/tasks/tools/install-kubectl/#install-kubectl-on-macos)
-        1. [Windows Installation](https://kubernetes.io/docs/tasks/tools/install-kubectl/#install-kubectl-on-windows)
-    1. Configure `kubectl`
-        1. List the Kubernetes clusters in your project
-          ```
-          gcloud container clusters list
-          NAME              LOCATION       MASTER_VERSION  MASTER_IP      MACHINE_TYPE   NODE_VERSION   NUM_NODES  STATUS
-          gke-24g-workshop  us-central1-a  1.12.7-gke.10   35.184.96.245  n1-standard-4  1.12.7-gke.10  2          RUNNING
-          ```
-        1. Get your token and certificate authority for your user
-          ```
-          gcloud container clusters get-credentials gke-24g-workshop
-          ```
+### Setup Authentication to Google Container Registry
+```
+$ gcloud auth configure-docker
 
-        1. confirm set up was
-          ```
-          kubectl get nodes
-          NAME                                              STATUS   ROLES    AGE     VERSION
-          gke-gke-24g-workshop-default-pool-2d9d42c6-1vxp   Ready    <none>   3m41s   v1.12.7-gke.10
-          gke-gke-24g-workshop-default-pool-a4b67bed-zxhb   Ready    <none>   3m37s   v1.12.7-gke.10
-          ```
+gcloud's Docker credential helper can be configured but it will not work until this is corrected.
+The following settings will be added to your Docker config file 
+located at [/root/.docker/config.json]:
+{
+  "credHelpers": {
+    "gcr.io": "gcloud", 
+    "us.gcr.io": "gcloud", 
+    "eu.gcr.io": "gcloud", 
+    "asia.gcr.io": "gcloud", 
+    "staging-k8s.gcr.io": "gcloud", 
+    "marketplace.gcr.io": "gcloud"
+  }
+}
+
+Do you want to continue (Y/n)?  
+```
+
+### Set up `kubectl`
+1. Install `kubectl`
+    1. [Linux Installation](https://kubernetes.io/docs/tasks/tools/install-kubectl/#install-kubectl-on-linux)
+    1. [Mac Installation](https://kubernetes.io/docs/tasks/tools/install-kubectl/#install-kubectl-on-macos)
+    1. [Windows Installation](https://kubernetes.io/docs/tasks/tools/install-kubectl/#install-kubectl-on-windows)
+
+1. Configure `kubectl`
+  1. List the Kubernetes clusters in your project
+```
+gcloud container clusters list
+NAME              LOCATION       MASTER_VERSION  MASTER_IP      MACHINE_TYPE   NODE_VERSION   NUM_NODES  STATUS
+gke-24g-workshop  us-central1-a  1.12.7-gke.10   35.184.96.245  n1-standard-4  1.12.7-gke.10  2          RUNNING
+```
+    1. Get your token and certificate authority for your user
+```
+gcloud container clusters get-credentials gke-24g-workshop
+```
+
+    1. confirm set up was
+```
+kubectl get nodes
+NAME                                              STATUS   ROLES    AGE     VERSION
+gke-gke-24g-workshop-default-pool-2d9d42c6-1vxp   Ready    <none>   3m41s   v1.12.7-gke.10
+gke-gke-24g-workshop-default-pool-a4b67bed-zxhb   Ready    <none>   3m37s   v1.12.7-gke.10
+```
 ## Slides
 * Feel free to follow along with [the slides](https://docs.google.com/presentation/d/1OQYcl3PwPM9NJ3AbExLV9A8AWbCEzbxj0VceIOhPnyY/edit#slide=id.p).
