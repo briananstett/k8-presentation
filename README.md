@@ -23,7 +23,7 @@ In the era of cloud and cluster computing, [Containers](https://www.docker.com/r
 ---
 
 ### Install and config GCP's CLI SDK. 
-1. If you don't have `gcloud` installed on your machine
+#### If you don't have `gcloud` installed on your machine
 
 [Linux, Windows, Mac installation documentation](https://cloud.google.com/sdk/docs/quickstarts)
 
@@ -45,7 +45,7 @@ Pick cloud project to use:
 Please enter numeric choice
 ```
 
-1. If you already have `gcloud` installed on your machine
+#### If you already have `gcloud` installed on your machine
 Initialize the client
 ```
 $ gcloud init
@@ -74,31 +74,32 @@ Please enter your numeric choice:
 ```
 
 ### Install Docker
-1. [Linux](https://docs.docker.com/install/linux/docker-ce/centos/)
-1. [Mac](https://docs.docker.com/docker-for-mac/install/)
-1. [Windows](https://docs.docker.com/docker-for-windows/install/)
-1. Confirm Docker is working on your machine
-    ```
-    $ docker version
-      Client:
-      Version:           18.09.1
-      API version:       1.39
-      Go version:        go1.10.6
-      Git commit:        4c52b90
-      Built:             Wed Jan  9 19:35:31 2019
-      OS/Arch:           linux/amd64
-      Experimental:      false
+* [Linux](https://docs.docker.com/install/linux/docker-ce/centos/)
+* [Mac](https://docs.docker.com/docker-for-mac/install/)
+* [Windows](https://docs.docker.com/docker-for-windows/install/)
 
-      Server: Docker Engine - Community
-      Engine:
-        Version:          18.09.1
-        API version:      1.39 (minimum version 1.12)
-        Go version:       go1.10.6
-        Git commit:       4c52b90
-        Built:            Wed Jan  9 19:02:44 2019
-        OS/Arch:          linux/amd64
-        Experimental:     false
-      ```
+Confirm Docker is working on your machine
+```
+$ docker version
+  Client:
+  Version:           18.09.1
+  API version:       1.39
+  Go version:        go1.10.6
+  Git commit:        4c52b90
+  Built:             Wed Jan  9 19:35:31 2019
+  OS/Arch:           linux/amd64
+  Experimental:      false
+
+  Server: Docker Engine - Community
+  Engine:
+    Version:          18.09.1
+    API version:      1.39 (minimum version 1.12)
+    Go version:       go1.10.6
+    Git commit:       4c52b90
+    Built:            Wed Jan  9 19:02:44 2019
+    OS/Arch:          linux/amd64
+    Experimental:     false
+  ```
 
 ### Setup Authentication to Google Container Registry
 Add a Docker credential helper
@@ -123,12 +124,12 @@ Do you want to continue (Y/n)?
 ```
 
 ### Set up `kubectl`
-1. Install `kubectl`
-    1. [Linux Installation](https://kubernetes.io/docs/tasks/tools/install-kubectl/#install-kubectl-on-linux)
-    1. [Mac Installation](https://kubernetes.io/docs/tasks/tools/install-kubectl/#install-kubectl-on-macos)
-    1. [Windows Installation](https://kubernetes.io/docs/tasks/tools/install-kubectl/#install-kubectl-on-windows)
+#### Install `kubectl`
+* [Linux Installation](https://kubernetes.io/docs/tasks/tools/install-kubectl/#install-kubectl-on-linux)
+* [Mac Installation](https://kubernetes.io/docs/tasks/tools/install-kubectl/#install-kubectl-on-macos)
+* [Windows Installation](https://kubernetes.io/docs/tasks/tools/install-kubectl/#install-kubectl-on-windows)
 
-1. Configure `kubectl`
+#### Configure `kubectl`
 
 List the Kubernetes clusters in your project
 ```
