@@ -4,7 +4,7 @@ In the era of cloud and cluster computing, [Containers](https://www.docker.com/r
 --- 
 ## Kubernetes at 24G
 * We have been running Kubernetes in production for over a year now. We have multiple clusters on multiple clouds and on average have between 200 and 300 containers running at any given momment. 
-* We have CI/CD pipelines that automatically create new Docker images and deploy them to correct cluster. Kubernetes then performs a [Rolling Update](https://kubernetes.io/docs/tutorials/kubernetes-basics/update/update-intro/) to safely delete old instances of the code, replacing them with the new. Kubernetes performs constent health checks and will rollback the previous version if there are issues.
+* We have CI/CD pipelines that automatically create new Docker images and deploy them to the correct cluster. Kubernetes then performs a [Rolling Update](https://kubernetes.io/docs/tutorials/kubernetes-basics/update/update-intro/) to safely delete old instances of the code, replacing them with the new. Kubernetes performs constent health checks and will rollback to the previous version if there are issues. This all done while guaranteeing high availability (no down time). 
 * We've implemented multiple [operators](https://kubernetes.io/docs/concepts/extend-kubernetes/api-extension/custom-resources/) on top of Kubernetes that automate tasks such as [SSL certification registrion](https://github.com/jetstack/cert-manager) and the creation of [DNS entries](https://github.com/helm/charts/tree/master/stable/external-dns).
 
 --- 
