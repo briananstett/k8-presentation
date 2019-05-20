@@ -75,6 +75,7 @@ Please enter your numeric choice:
 
 ### Install Docker
 * [Linux](https://docs.docker.com/install/linux/docker-ce/centos/)
+    * You may need to add the `docker` group to your user in order to interact with the `/var/run/docker.sock` file. 
 * [Mac](https://docs.docker.com/docker-for-mac/install/)
 * [Windows](https://docs.docker.com/docker-for-windows/install/)
 
@@ -149,5 +150,11 @@ NAME                                              STATUS   ROLES    AGE     VERS
 gke-gke-24g-workshop-default-pool-2d9d42c6-1vxp   Ready    <none>   3m41s   v1.12.7-gke.10
 gke-gke-24g-workshop-default-pool-a4b67bed-zxhb   Ready    <none>   3m37s   v1.12.7-gke.10
 ```
+
+### Install Node.js
+* [Linux installation](https://nodejs.org/en/download/package-manager/#debian-and-ubuntu-based-linux-distributions-enterprise-linux-fedora-and-snap-packages)
+* [Mac installation](https://nodejs.org/en/download/)
+* [Windows installation](https://nodejs.org/en/download/)
+
 ## Slides
 * Feel free to follow along with the [slides](https://docs.google.com/presentation/d/1OQYcl3PwPM9NJ3AbExLV9A8AWbCEzbxj0VceIOhPnyY/edit#slide=id.p).

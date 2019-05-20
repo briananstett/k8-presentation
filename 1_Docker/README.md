@@ -1,7 +1,6 @@
 # 1. Docker
-[Docker](https://docs.docker.com/) is one of the most popular container runtimes and the onewe use at 24G. See this [article](https://www.docker.com/resources/what-container) for more information about what a container is.
+[Docker](https://docs.docker.com/) is one of the most popular container runtimes and the one we use at 24G. See this [article](https://www.docker.com/resources/what-container) for more information about what a container is.
 #### Table of Contents
-* [Installation](#installation)
 * [Dockerfile](#dockerfile)
 * [Running a Container](#Running-a-container)
 * [Mapping External Devices Into a Container](#Mapping-Host-Devices-Into-a-Container)
@@ -9,16 +8,12 @@
 * [Container Management](#Container-Management)
 
 ## Prerequisites
-* [gcloud](https://cloud.google.com/sdk/install) is installed
-
-## Installation
-* [Install Docker for Ubuntu](https://docs.docker.com/install/linux/docker-ce/ubuntu/)
-* [Install Docker for CentOS](https://docs.docker.com/install/linux/docker-ce/centos/)
-* [Install Docker for Windows](https://docs.docker.com/docker-for-windows/install/)
+Pleaes follow the prerequisite instructions [here](../README.md) to install `Docker` and configure `gcloud`. 
 
 ---
 ## Dockerfile and Images
 *For this section use, `1_FirstContainer`*
+
 "Images are the recipe, a container is the cake." For more indepth information about images, see [this article](https://docs.docker.com/v17.09/engine/userguide/storagedriver/imagesandcontainers/).
 
 Docker builds images by reading the instructions from a `Dockerfile`. A `Dockerfile` is a text document that contains all the commands a user could call on the command line to assemble an image. Think of a Docker image as *class* in object oriented programming, from which we can instantiate our continers from. 
@@ -48,12 +43,18 @@ ENV PORT=3000
 CMD npm start
 
 ```
-A key concept about `Dockerfiles`, is what `Dockerfile keywords` run during the build step vs runtime. From the example above, all the instructions *expect* `CMD`/`ENTRYPOINT` run just during the build. One the image was created, those commands will never be executed again. The only instructions above that is used during runtime is the last instruction, `CMD`,  which tells Docker the executable to run when the container starts.
+A key concept about `Dockerfiles`, is what `Dockerfile keywords` run during the build step vs runtime. From the example above, all the instructions *expect* `CMD`/`ENTRYPOINT` run just during the build. Once the image is created, those commands will never be executed again. The only instructions above that is used during runtime is the last instruction, `CMD`,  which tells Docker the executable to run when the container starts.
 
 From within the `1_FirstContainer` direcotry... 
 ### Build the Image
+Install the needed node dependencies.
 ```
-// docker build -t <name of the image>:<optional tag> <Dockerfile location>
+1_Docker/1_FirstContainer$ npm install
+```
+
+Build our image
+```
+// docker build -t <name of the image>:<optional tag> <build context>
 $ docker build -t myimage:v1 .
 ```
 Once the image finishes building, we can see all Docker images on our machine with [docker images](https://docs.docker.com/engine/reference/commandline/images/), one of which was the image we just made.
@@ -65,19 +66,16 @@ myimages                  v1              22fd13a039d0        Just Now          
 ---
 
 ## Running a container
-The [docker run](https://docs.docker.com/engine/reference/run/) command is used to create a container. There are *many* flags and options associated with this command but for this example we will cover the basics. Please see [reference](https://docs.docker.com/engine/reference/run/) for guidance.
+The [docker run](https://docs.docker.com/engine/reference/run/) command is used to create a container. There are *many* flags and options associated with this command but for this example we will cover the basics. Please see [reference](https://docs.docker.com/engine/reference/run/) for guidance if you wish to learn more about `docker run`.
 
 There are two main ways to run a container. In `Foreground mode` or in `Detached mode`.
 
 [Foreground](https://docs.docker.com/engine/reference/run/#foreground) mode starts a process in a container and attaches the console to the process's standard input, output, and standard error. We can create a tty for the container and keep STDIN open with the `-it` flags. The big take away is that the `-i` flag keeps the `STDIN` open even after execution of the entry command.
 
-```
-docker run -it -p 3000:3000 <image>:<option tag> <optional command>
-```
-
 We can start our Node server and attach to it with the following command
 ```
-docker run -it  -p 3000:3000 us.gcr.io/g-1575-internal-projects/myImage:v1
+//docker run -it <your image name>:<optional tag> <optional command>
+$ docker run -it  us.gcr.io/g-1575-internal-projects/myImage:v1
 ```
 This starts the server and we can see the logs as requests come through. It however is important to note that we are attached to the container's main executable process and we kill (-9) the process, the container itself will stop and we will get kicked out.
 
@@ -415,7 +413,7 @@ We can use the `docker ps -a` command to get the the Container ID of a stopped c
 ```
 $ docker ps -a
 CONTAINER ID     IMAGE             COMMAND                  CREATED         STATUS                       PORTS      NAMES
-426762011d86     broken-image:v1   "/bin/sh -c 'npm sta…"   3 minutes ago   Exited (254) 3 minutes ago              keen_northcutt
+426762011d86     broken-image:v1   "/bin/sh -c 'npm staï¿½"   3 minutes ago   Exited (254) 3 minutes ago              keen_northcutt
 ```
 
 Then get the logs from the stopped container.
@@ -460,7 +458,7 @@ f328ba89a889d897bc950dcc3fcd76d9ec853045a46c1598f9e501cd41c40cad
 
 $docker ps
 CONTAINER ID    IMAGE               COMMAND                  CREATED         STATUS         PORTS                    NAMES
-f328ba89a889    broken-image:v2     "/bin/sh -c 'npm sta…"   2 seconds ago   Up 2 seconds   0.0.0.0:3000->3000/tcp   jolly_clarke
+f328ba89a889    broken-image:v2     "/bin/sh -c 'npm staï¿½"   2 seconds ago   Up 2 seconds   0.0.0.0:3000->3000/tcp   jolly_clarke
 ```
 ![](./4_ContainerManagement/html/static/images/broken.png)
 For some reason, the page isn't full screen. Let's get into the container and checkout the html. We can start a shell as a new process in the container with the [docker exec](https://docs.docker.com/engine/reference/commandline/exec/).
