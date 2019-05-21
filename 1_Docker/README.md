@@ -52,21 +52,21 @@ Install the needed node dependencies.
 1_Docker/1_FirstContainer$ npm install
 ```
 
-Build our image
+Build our image. The image tag will default to `latest` if nothing is specified. 
 ```
 // docker build -t <name of the image>:<optional tag> <build context>
-$ docker build -t myimage:v1 .
+1_Docker/1_FirstContainer$ docker build -t myimage:v1 .
 ```
 Once the image finishes building, we can see all Docker images on our machine with [docker images](https://docs.docker.com/engine/reference/commandline/images/), one of which was the image we just made.
 ```
-$ docker images
+1_Docker/1_FirstContainer$ docker images
 REPOSITORY                TAG             IMAGE ID            CREATED             SIZE
-myimages                  v1              22fd13a039d0        Just Now            399MB
+myimage                  v1              22fd13a039d0        Just Now            399MB
 ```
 ---
 
 ## Running a container
-The [docker run](https://docs.docker.com/engine/reference/run/) command is used to create a container. There are *many* flags and options associated with this command but for this example we will cover the basics. Please see [reference](https://docs.docker.com/engine/reference/run/) for guidance if you wish to learn more about `docker run`.
+The [docker run](https://docs.docker.com/engine/reference/run/) command is used to create a container. There are *many* flags and options associated with this command but for this example we will cover the basics. Please see this [reference](https://docs.docker.com/engine/reference/run/) for guidance if you wish to learn more about `docker run`.
 
 There are two main ways to run a container. In `Foreground mode` or in `Detached mode`.
 
@@ -75,7 +75,7 @@ There are two main ways to run a container. In `Foreground mode` or in `Detached
 We can start our Node server and attach to it with the following command
 ```
 //docker run -it <your image name>:<optional tag> <optional command>
-$ docker run -it  us.gcr.io/g-1575-internal-projects/myImage:v1
+1_Docker/1_FirstContainer$ docker run -it  myimage:v1
 ```
 This starts the server and we can see the logs as requests come through. It however is important to note that we are attached to the container's main executable process and we kill (-9) the process, the container itself will stop and we will get kicked out.
 
@@ -93,59 +93,81 @@ Request from ::1
 
 We can override the container's `CMD` instruction by starting the container with our own executable
 ```
-docker run -it  us.gcr.io/g-1575-internal-projects/myImage:v1 /bin/sh
+1_Docker/1_FirstContainer$ docker run -it myimage:v1 /bin/sh
 ```
-This command will start a new container, but this time, will just have a shell as the container's main process (not `npm start` which was defined in the Dockerfile). We can now navigate the containe's filesytem and spawn child processes, even our node server.
+This command will start a new container, but this time, will just have a shell as the container's main process (not `npm start` which was defined in the Dockerfile). We can now navigate the containe's filesytem and spawn child processes, even our node server. 
+
+```
+// Inside the container
+/nodeApp# ls
+images      index.html    index.js     node_modules   package-lock.json  package.json
+
+/nodeApp# npm start
+> 1_docker@1.0.0 start /nodeApp
+> node index.js
+
+listening on port 3000
+
+^C
+/nodeApp#
+```
+
+Notice this time however, if we kill (-9) our node server we don't get kicked out of the container. This is because the node server is not the container's main executable process, its `/bin/sh`. If we were to kill our shell process, the container will exit. 
 
 [Detached](https://docs.docker.com/engine/reference/run/#detached--d) mode starts a container the background and will exit when the root process used to run the container exits. This is in contrast to running a container with the `-i` flag which leave `STDIN` open even after completion of the root process. Because the container will stop if the root process exits in a *detached* container, the root process must always run in the foreground of the container.
 
 ```
-docker run -d -p 80:80 httpd apachectl -D FOREGROUND 
+1_Docker/1_FirstContainer$ docker run -d myimage:v1
+78938974cd396e9a9a0cb37ddb54efd12040670f7e73838182fc9e48ab179b1b
+```
+
+The container's ID is outputted and we can see the running container with `docker ps`
+```
+1_Docker/1_FirstContainer$ docker ps
+CONTAINER ID   IMAGE      COMMAND                  CREATED           STATUS          PORTS    NAMES
+78938974cd39   myimage     "/bin/sh -c 'npm sta…"   34 seconds ago    Up 33 seconds            gracious_franklin
 ```
 
 ### Exposing Ports on Host Machine
-By default, each container has its own IP address and can be accessed from the host machine only. We tell Docker the container listens on a specific port with the [expose](https://docs.docker.com/engine/reference/builder/#expose) Dockerfile keyword. *But this instruction does not actually publish the port. It functions as a type of documentation between the person who builds the image and the person who runs the container, about which ports are intended to be published*. If you would like to access a container from outside of the host machine, you need to [publish](https://docs.docker.com/engine/reference/run/#expose-incoming-ports) a port on the host machine that maps to a port on container. 
+By default, each container has its own IP address and can be accessed from the host machine only. We tell the Docker daemon the container listens on a specific port with the [expose](https://docs.docker.com/engine/reference/builder/#expose) Dockerfile keyword. *This instruction does not actually publish the port. It functions as a type of documentation between the person who builds the image and the person who runs the container, about which ports are intended to be published*. If you would like to access a container from outside of the host machine, you need to [publish](https://docs.docker.com/engine/reference/run/#expose-incoming-ports) a port on the host machine that maps to a port on container. 
 
 `-p` is used to provide specific mappings
 ```
--p hostPort:containerPort
--p hostPort-Range:containerPort-Range
--p 8080:80 // Host port 8080 maps to port 80 on the container
+docker run <image> -p hostPort:containerPort
+docker run <image> -p hostPort-Range:containerPort-Range
+docker run <image> -p 8080:80 // Host port 8080 maps to port 80 on the container
+```
+Since our application listens on port `3000` by default, let's run our container again, this time publish the exposed port on the host machine.
+```
+1_Docker/1_FirstContainer$ docker run -d -p 3000:3000 myimage:v1
+1_Docker/1_FirstContainer$ docker ps
+CONTAINER ID   IMAGE      COMMAND                  CREATED           STATUS         PORTS                    NAMES
+af909b353b8f   myimage    "/bin/sh -c 'npm sta…"   2 seconds ago     Up 1 second    0.0.0.0:3000->3000/tcp   wonderful_snyder
+```
+We can see with `docker ps` that our new container is running and is "mapping" port `3000` on our host machine to port `3000` on our container. We can now navigate to `localhost:3000` and we should be able to access the website running in our container.Note, the host and container port don't have to match. For example we could have run the following command to map port `80` on the host machine to port `3000` on the contianer.
+```
+1_Docker/1_FirstContainer$ docker run -d -p 80:3000 myimage:v1
+1_Docker/1_FirstContainer$ docker ps
+CONTAINER ID   IMAGE      COMMAND                  CREATED          STATUS          PORTS                  NAMES
+e636fae42698   myimage    "/bin/sh -c 'npm sta…"   3 seconds ago    Up 2 seconds    0.0.0.0:80->3000/tcp   pensive_mendel
 ```
 
-`-P` pushlishes all exposed ports of the container to the host. Host ports are choosen at random from a configured range.
-
+`-P` (capital P) pushlishes all exposed ports of the container to the host. The publishing port on the host machine are choosen at random from a configured range. In our `Dockerfile` we exposed port `3000`.
 ```
-//Dockerfile
+//Snippet from our Dockerfile
 ...
 
-EXPOSE 80
+EXPOSE 3000
 ```
-
-
+If we create a new container, and this time use the `-P` flag, our exposed container port will be published to a random port on the host machine. After running the following command, notice that our container has port `32768` on the host machine mapped to port `3000` on our container. 
 ```
 // Docker run with -P
-brian@BrianDesktop:~$ docker run -d -P httpd
+1_Docker/1_FirstContainer$ docker run -d -P myimage:v1
+adeb21ac2acbf435052ea08098613dd679975749fe024b2608eb2ee319559aef
+1_Docker/1_FirstContainer$ docker ps 
+CONTAINER ID   IMAGE     COMMAND                  CREATED          STATUS         PORTS                     NAMES
+adeb21ac2acb   myimage   "/bin/sh -c 'npm sta…"   2 seconds ago    Up 1 second   0.0.0.0:32768->3000/tcp   priceless_margulis
 ```
-```
-// Docker ps
-brian@BrianDesktop:~$ docker ps
-CONTAINER ID        IMAGE               COMMAND              CREATED             STATUS              PORTS                   NAMES
-d8d3bcac214b        httpd               "httpd-foreground"   4 seconds ago       Up 2 seconds        0.0.0.0:32768->80/tcp   cranky_jackson
-```
-
-
-```
-// Docker run with -p
-brian@BrianDesktop:~$ docker run -d -p 8080:80 httpd
-```
-```
-// Docker ps
-brian@BrianDesktop:~$ docker ps
-CONTAINER ID        IMAGE               COMMAND              CREATED             STATUS              PORTS                   NAMES
-d8d3bcac214b        httpd               "httpd-foreground"   4 seconds ago       Up 2 seconds        0.0.0.0:8080->80/tcp   cranky_jackson
-```
-
 
 ### Naming your containers
 By default, Docker randomly assigns your containers a human friendly name. If you wish to name your containers, you can with the [--name](https://docs.docker.com/engine/reference/run/#container-identification) flag of the `docker run` command
