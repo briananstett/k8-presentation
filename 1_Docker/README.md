@@ -144,7 +144,7 @@ Since our application listens on port `3000` by default, let's run our container
 CONTAINER ID   IMAGE      COMMAND                  CREATED           STATUS         PORTS                    NAMES
 af909b353b8f   myimage    "/bin/sh -c 'npm sta…"   2 seconds ago     Up 1 second    0.0.0.0:3000->3000/tcp   wonderful_snyder
 ```
-We can see with `docker ps` that our new container is running and is "mapping" port `3000` on our host machine to port `3000` on our container. We can now navigate to `localhost:3000` and we should be able to access the website running in our container.Note, the host and container port don't have to match. For example we could have run the following command to map port `80` on the host machine to port `3000` on the contianer.
+We can see with `docker ps` that our new container is running and is "mapping" port `3000` on our host machine to port `3000` on our container. If we now navigate to `localhost:3000` on our machine we should be able to access the website running in our container.Note, the host and container port don't have to match. For example we could have run the following command to map port `80` on the host machine to port `3000` on the contianer.
 ```
 1_Docker/1_FirstContainer$ docker run -d -p 80:3000 myimage:v1
 1_Docker/1_FirstContainer$ docker ps
@@ -152,7 +152,7 @@ CONTAINER ID   IMAGE      COMMAND                  CREATED          STATUS      
 e636fae42698   myimage    "/bin/sh -c 'npm sta…"   3 seconds ago    Up 2 seconds    0.0.0.0:80->3000/tcp   pensive_mendel
 ```
 
-`-P` (capital P) pushlishes all exposed ports of the container to the host. The publishing port on the host machine are choosen at random from a configured range. In our `Dockerfile` we exposed port `3000`.
+`-P` (capital P) pushlishes all exposed ports of the container to the host. The publishing ports on the host machine are choosen at random from a configured range. In our `Dockerfile` we exposed port `3000`.
 ```
 //Snippet from our Dockerfile
 ...
@@ -173,43 +173,44 @@ adeb21ac2acb   myimage   "/bin/sh -c 'npm sta…"   2 seconds ago    Up 1 second
 By default, Docker randomly assigns your containers a human friendly name. If you wish to name your containers, you can with the [--name](https://docs.docker.com/engine/reference/run/#container-identification) flag of the `docker run` command
 
 ```
-brian@BrianDesktop:~$ docker run -d -P --name dockerIsCool httpd
-```
-
-```
-brian@BrianDesktop:~$ docker ps
-CONTAINER ID        IMAGE               COMMAND              CREATED             STATUS              PORTS                   NAMES
-d6a568e8ea6a        httpd               "httpd-foreground"   3 seconds ago       Up 1 second         0.0.0.0:32769->80/tcp   dockerIsCool
+1_Docker/1_FirstContainer$ docker run -d -P --name dockerIsCool myimage:v1
+1_Docker/1_FirstContainer$ docker ps
+CONTAINER ID   IMAGE     COMMAND                  CREATED          STATUS          PORTS                   NAMES
+d6a568e8ea6a   myimage   "/bin/sh -c npm start"   3 seconds ago    Up 1 second     0.0.0.0:32769->80/tcp   dockerIsCool
 ```
 ---
 ### Push to a Container Registry
-[Container Registries](https://docs.docker.com/registry/) are repositories for storing and distributing your Docker images. They can be private or public and self hosted or through a registry provider. At 24G we primarly use [GCP's Container Registry](https://cloud.google.com/container-registry/).
+[Container Registries](https://docs.docker.com/registry/) are repositories for storing and distributing your Docker images. They can be private or public, self hosted or through a registry provider. At 24G we primarly use [GCP's Container Registry](https://cloud.google.com/container-registry/). 
 
 [docker push](https://docs.docker.com/engine/reference/commandline/push/) is used to push an image to registry.
 
-For this example, we've already created a *public* registry so no credentials are required. Almost all other 24G images are private and [require credentials to access](https://docs.docker.com/engine/reference/commandline/login/).
+For this example, we've already created a *public* registry so no credentials are required. Please use the `us.gcr.io/g-1575-k8-workshop` registry. If you wish to learn how to use private registries, checkout this [reference](https://docs.docker.com/engine/reference/commandline/login/).
 
-To create a container registry, navigaate to GCP > Container Registry and *Enable API*. By default, GCP container registries are private so we have to signin.
-
+If you haven't done so already, make sure you have the GCP Docker auth helper installed.
 ```
 $ gcloud auth configure-docker
 ```
 
-First we need to re-tag our image we made in the last step in order to *push* our image to our registry. We can use the [docker tag](https://docs.docker.com/engine/reference/commandline/tag/) command to do this. Let's tag our image to be pushed to our public registry. An image name is made up of slash-separated name components, optionally prefixed by a registry hostname.
+First we need to re-tag our image we made in the last step in order to *push* our image to our registry. We can use the [docker tag](https://docs.docker.com/engine/reference/commandline/tag/) command to do this. Let's tag our image to be pushed to our public registry. An image name is made up of slash-separated name components, prefixed by a registry hostname. 
 
 ```
-// optionalHostname/component1/component2/:tag
+// hostname/component1/component2/:tag
 // us.gcr.io/j-1794/activation2/:v1
 ```
 
-To use our public registry, we have to follow a certain image name pattern. Let's tag our earlier image.
+To use our public registry, we have to follow a certain image name pattern. Let's re-tag our earlier image.
 ```
 // us.gcr.io/projectName/imageName:tag
-$ docker tag myimage:v1 us.gcr.io/<project id>/myimage:v1
+$ docker tag myimage:v1 us.gcr.io/g-1575-k8-workshop/myimage:v1
 ```
 Finally, push your image to the public registry.
 ```
-docker push myimage:v1 us.gcr.io/<project id>/myimage:v1
+$ docker push us.gcr.io/g-1575-k8-workshop/myimage:v1
+The push refers to repository [us.gcr.io/g-1575-k8-workshop/myimage]
+e3625d1dc84b: Pushed 
+379b65e7f4f2: Pushed 
+df64d3292fd6: Layer already exists 
+v1: digest: sha256:391841a2d3c09e17a2d6d13c8621ef497395ffacfd679ca8e13779d46c88a2c6 size: 1369
 ```
 
 ### Pull an Image
@@ -217,15 +218,17 @@ Once a Docker image is hosted in a registry, we can pull down that image to our 
 
 [docker pull](https://docs.docker.com/engine/reference/commandline/pull/) command is used to pull down an image from a registry.
 ```
-docker pull us.gcr.io/<>/myImage:v1
+// Pull the lastest mysql image
+$ docker pull mysql
 ```
 
 For more information about image tagging, push, and pulling from GCP's container registry, see [this article](https://cloud.google.com/container-registry/docs/pushing-and-pulling).
 ---
-## Mapping Host Devices Into a Container
+
+## Mapping Host Devices Into a Container (Optional)
 *For this section use `2_MappingExternalDevices`*
 
-It is possible with Docker to "mount" or "map" a device on the host machine into a container. Use the [--device](https://docs.docker.com/engine/reference/commandline/run/#add-host-device-to-container---device) flag of the `docker run` command. This is helpful for number of reasons (IoT, local development, PnP, etc.)
+It is possible with Docker to "mount" a device on the host machine into a container. Use the [--device](https://docs.docker.com/engine/reference/commandline/run/#add-host-device-to-container---device) flag of the `docker run` command. This is helpful for number of reasons (IoT, local development, PnP, etc.)
 
 By default, `--device` uses the same destination device file as the source.
 ```
@@ -264,9 +267,9 @@ We should now start to see the LED blink.
 ## Persistent Storage
 *For this section use `3_PersistentStorage`*
 
-By default all files created inside a container are stored on a writable container layer. They will be lost when the container is deleted from the host machine. Although, there are multiple options for persistent storage, you will primarily use [volumes](https://docs.docker.com/storage/volumes/), and [bind mounts](https://docs.docker.com/storage/bind-mounts/). 
+Before we start the exersice, let's learn about persistent storage. By default all files created inside a container are stored on a writable container layer. They will be lost when the container is deleted from the host machine. Although, there are multiple options for persistent storage, you will primarily use [volumes](https://docs.docker.com/storage/volumes/), and [bind mounts](https://docs.docker.com/storage/bind-mounts/). 
 
-1. [volumes](https://docs.docker.com/storage/volumes/) are a storage device completely managed by Docker. Docer volumes reside on the host's filesystem at `/var/lib/docker/volumes`. We use the [--mount](https://docs.docker.com/storage/volumes/#choose-the--v-or---mount-flag) flag on `docker run` to configure persistent storage.
+1. [volumes](https://docs.docker.com/storage/volumes/) are a storage device completely managed by Docker. Docer volumes reside on the host's filesystem at `/var/lib/docker/volumes` (for windows, often the volumes are stored at `C:\ProgramData\docker\volumes`). We use the [--mount](https://docs.docker.com/storage/volumes/#choose-the--v-or---mount-flag) flag on `docker run` to configure persistent storage.
 
 ![](./images/volume.png)
 
@@ -332,30 +335,52 @@ $ docker inspect foobar --format '{{.Mounts}}'
 }]
 ```
 
-In this example, we'll run a Nodejs application that pulls down content from Imgur and serves images, videos, and gifs locally. We'll attach persistent storage so all of the images pulled will not be lost when the container stops or is deleted.
+*Start of exersice!*
+
+In this exersice, we'll run a Nodejs application that pulls down content from Imgur and serves images, videos, and gifs locally. We'll attach persistent storage so all of the images pulled will not be lost when the container stops or is deleted.
 
 First, we need to build a new image using the provided `Dockerfile`.
 ```
-$ docker build -t imgurpuller:v1 . 
+1_Docker/3_PersistentStorage$ npm install
+1_Docker/3_PersistentStorage$ docker build -t imgurpuller . 
 ```
 
 Out of the box, we could start this image and Docker will automatically creat an Anonymous volumes and mount it because of the Docker file directive [Volume](https://docs.docker.com/engine/reference/builder/#volume). 
 ```
-//Dockerfile
-...
-
+// Dockerfile snippet
 VOLUME /imgurApp/images
 ```
-Using the `--mount` flag while executing `docker run` (volume or bind mount) will overide this directive.
-
-Let's try running the application with bind mount to a directory on our host machine.
+From the command below we can see that after starting the container, an `Anonymous` volume was created for us. If we were to navigate to that path on our machine's filesystem, we would see the imgur content our application pulled down.
 ```
-$ docker run -d -p 3000:3000 --mount type=bind,src=/tmp/images,dst=/imgurApp/images imgurpuller:v1
+1_Docker/3_PersistentStorage$ docker run -d -p 3000:3000 --name imgurpuller imgurpuller
+232fff346e389bd9bba41a45ca4c6cd3f71703617e58a8318b1677259b227167
+1_Docker/3_PersistentStorage$ docker inspect imgurpuller --format '{{.Mounts}}'
+[{volume c8c16b97faec016e67b73f806bc9484a08bad9d4c2516896450c78eeff23e707 /var/lib/docker/volumes/c8c16b97faec016e67b73f806bc9484a08bad9d4c2516896450c78eeff23e707/_data /imgurApp/images local  true }]
+
+1_Docker/3_PersistentStorage$ sudo ls /var/lib/docker/volumes/c8c16b97faec016e67b73f806bc9484a08bad9d4c2516896450c78eeff23e707/_data
+j3yNKAo.mp4  KbTidzw.gif  NvOoFM2.jpg  URfMotB.jpg  Y0PwdVv.jpg
+```
+
+*Using the `--mount` flag while executing `docker run` (volume or bind mount) will overide this directive.*
+
+Now let's try running the application again with a `bind mount` to a directory on our host machine. (Note, choose the best source path for your system). First stop and remove the old container.
+```
+1_Docker/3_PersistentStorage$ docker stop imgurpuller
+1_Docker/3_PersistentStorage$ docker rm -v imgurpuller
+
+1_Docker/3_PersistentStorage$ docker run -d -p 3000:3000 --mount type=bind,src=/tmp/images,dst=/imgurApp/images --name imgurpuller imgurpuller
+0449e7477a8214bc873bb7c7247d6ba8d3995d6308628280cff4fabcf60248d6
+
+1_Docker/3_PersistentStorage$ docker inspect imgurpuller --format '{{.Mounts}}'
+[{bind  /tmp/images /imgurApp/images   true rprivate}]
+
+1_Docker/3_PersistentStorage$ ls /tmp/images
+a8IyaZl.jpg  Jmk7xoK.jpg  LAt5XSD.jpg  ma9t5vB.jpg  OIVS2DE.jpg  pnBTuJK.jpg
 ```
 ---
 
 ## Container Management
-*For this section use `1_FirstContainer`*
+*For this section use `4_ContainerManagement`*
 
 [docker ps](https://docs.docker.com/engine/reference/commandline/ps/#options) list all containers running. You can list all containers (running or not) with the `-a[--all]` flag.
 ```
@@ -414,18 +439,20 @@ httpd                                           latest              2a51bb06dc8b
 $ docker rmi <images id or name>
 ```
 
-Let's try replicate an error with our image. First we need build our "faulty" image. 
+*Start of exercise!*
+
+In this exercise, let's try to replicate an error with our image. First we need to build our "faulty" image. 
 ```
-$ npm install
-$ docker build -t broken-image:v1 .
+1_Docker/4_ContainerManagement$ npm install
+1_Docker/4_ContainerManagement$ docker build -t brokenimage .
 ```
 
 Try running that image.
 ```
-$ docker run -d -p 3000:3000 broken-image:v1
+1_Docker/4_ContainerManagement$ docker run -d -p 3000:3000 brokenimage
 426762011d86f3eb286dc0df4890c9a71433f6df3e3639639bb6480c16ff6106
 
-$ docker ps
+1_Docker/4_ContainerManagement$ docker ps
 CONTAINER ID        IMAGE               COMMAND             CREATED             STATUS              PORTS               NAMES
 ```
 
@@ -433,9 +460,9 @@ The container started without any errors but `docker ps` doesn't show any runnin
 
 We can use the `docker ps -a` command to get the the Container ID of a stopped container
 ```
-$ docker ps -a
-CONTAINER ID     IMAGE             COMMAND                  CREATED         STATUS                       PORTS      NAMES
-426762011d86     broken-image:v1   "/bin/sh -c 'npm sta�"   3 minutes ago   Exited (254) 3 minutes ago              keen_northcutt
+1_Docker/4_ContainerManagement$ docker ps -a
+CONTAINER ID   IMAGE         COMMAND                  CREATED         STATUS                       PORTS      NAMES
+426762011d86   brokenimage   "/bin/sh -c 'npm sta�"   3 minutes ago   Exited (254) 3 minutes ago              keen_northcutt
 ```
 
 Then get the logs from the stopped container.
@@ -464,18 +491,18 @@ npm ERR! A complete log of this run can be found in:
 npm ERR!     /root/.npm/_logs/2019-01-11T02_59_12_945Z-debug.log
 ```
 
-Looks like I mistyped my route to a middleware function. lets fix the error and try again.
+The main Node.js process exited witha run time error. From further troubleshooting, it looks like I mistyped my route to a middleware function. lets fix the error and try again.
 ```
 // Line three of index.js
 const route = require('./middleware/mainRoute.js');
-// Change to 
+// Needs to be changed to 
 const route = require('./middle_ware/mainRoute.js');
 ```
 
 Rebuild the image and run
 ```
-$ docker build docker build -t broken-image:v2 .
-$ docker run -d -p 3000:3000 broken-image:v2
+1_Docker/4_ContainerManagement$ docker build docker build -t brokenimage .
+1_Docker/4_ContainerManagement$ docker run -d -p 3000:3000 brokenimage
 f328ba89a889d897bc950dcc3fcd76d9ec853045a46c1598f9e501cd41c40cad
 
 $docker ps

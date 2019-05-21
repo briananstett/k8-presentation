@@ -104,7 +104,7 @@
   }
 </style>
 
-<asdfasdf>
+<html>
   <div id="slice_1" class="slice">
     <h1>
       You Fixed it!
@@ -113,15 +113,13 @@
   <div id=slice_2 class="slice">
     <div id="syntax_error" class="error">
       <img src="static/images/warning.svg">
-      <h1>Syntax Error</h1>
-      <p>We were able to debug our syntax error with the <code>docker ps -a</code> and the <code>docker logs</code>
-        command.</p>
+      <h1>Run Time Error</h1>
+      <p>We were able to debug our run time error with the <code>docker ps -a</code> and the <code>docker logs</code> command.</p>
     </div>
     <div id="runtime_error" class="error">
       <img src="static/images/running.png">
-      <h1>Run Time Error</h1>
-      <p>We were able to debug our runtime error with the <code>docker logs</code> and the <code>docker exec </code>
-        command.</p>
+      <h1>Typo Error</h1>
+      <p>We were able to debug our typo error with the  <code>docker exec </code> command.</p>
     </div>
   </div>
 
