@@ -4,13 +4,13 @@ kind: Deployment
 metadata:
   labels:
     environmnet: development
-    name: apache-deployment
-  name: apache-deployment
+    name: jeff-deployment
+  name: jeff-deployment
 spec:
-  replicas: 2
+  replicas: 1
   selector:
     matchLabels:
-      name: apache-pod
+      name: jeff-pod
   strategy:
     rollingUpdate:
       maxSurge: 1
@@ -18,27 +18,31 @@ spec:
     type: RollingUpdate
   template:
     metadata:
-      name: apache-pod
+      name: jeff-pod
       labels:
-        name: apache-pod
+        name: jeff-pod
         environment: development
     spec:
       containers:
-      - name: apache-container
-        image: k8s.gcr.io/hpa-example
+      - name: jeff-container
+        image: us.gcr.io/g-1575-k8-workshop/jeff
         ports:
           - containerPort: 80
         resources:
+          limits:
+            cpu: 64m
+            memory: 64Mi
           requests:
-            cpu: 200m
+            cpu: 32m
+            memory: 32Mi
 ---
 kind: Service
 apiVersion: v1
 metadata:
-  name: apache-service
+  name: jeff-service
 spec:
   selector:
-    name: apache-pod
+    name: jeff-pod
   ports:
   - protocol: TCP
     port: 80
@@ -49,15 +53,15 @@ apiVersion: autoscaling/v2beta1
 kind: HorizontalPodAutoscaler
 metadata:
   labels:
-    name: apache-hpa
-  name: apache-hpa
+    name: jeff-hpa
+  name: jeff-hpa
 spec:
   scaleTargetRef:
     apiVersion: apps/v1
     kind: Deployment
-    name: apache-deployment
-  minReplicas: 2
-  maxReplicas: 10
+    name: jeff-deployment
+  minReplicas: 1
+  maxReplicas: 8
   metrics:
   - type: Resource
     resource:
