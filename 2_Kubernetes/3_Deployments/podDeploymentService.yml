@@ -1,16 +1,15 @@
----
 apiVersion: extensions/v1beta1
 kind: Deployment
 metadata:
   labels:
     environmnet: development
-    name: httpd-deployment
-  name: httpd-deployment
+    name: jeff-deployment
+  name: jeff-deployment
 spec:
   replicas: 3
   selector:
     matchLabels:
-      name: httpd-pod
+      name: jeff-pod
   strategy:
     rollingUpdate:
       maxSurge: 1
@@ -18,24 +17,31 @@ spec:
     type: RollingUpdate
   template:
     metadata:
-      name: httpd-pod
+      name: jeff-pod
       labels:
-        name: httpd-pod
+        name: jeff-pod
         environment: development
     spec:
       containers:
-      - name: httpd-container
-        image: httpd
+      - name: jeff-container
+        image: us.gcr.io/g-1575-k8-workshop/jeff
         ports:
           - containerPort: 80
+        resources:
+          limits:
+            cpu: 64m
+            memory: 64Mi
+          requests:
+            cpu: 32m
+            memory: 32Mi
 ---
 kind: Service
 apiVersion: v1
 metadata:
-  name: httpd-service
+  name: jeff-service
 spec:
   selector:
-    name: httpd-pod
+    name: jeff-pod
   ports:
   - protocol: TCP
     port: 80

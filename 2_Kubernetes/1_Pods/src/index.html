@@ -1,0 +1,218 @@
+<html>
+	<head>
+		<title>Jeff's Games</title>
+        <meta charset="utf-8"/>
+		<style>
+			canvas {
+			    border: 1px solid #d3d3d3;
+			    background-color: #f1f1f1;
+			    position: relative;
+			    width:80%;
+			    left:10%;
+			    top:40px;
+			}
+			.scorebutton{
+			    position: absolute;
+			    top: 7%;
+			    left:10.5%;
+			    width:80px;
+			}
+			.picupsbutton{
+			    position: absolute;
+			    top: 12%;
+			    left:10.5%;
+			    width:80px;
+			}
+		</style>
+	</head>
+	<body onload = "init()">
+	<script src="sprite.js"></script>
+	<script src="gameObjects.js"></script>
+	<script src="Jeff.js"></script>
+	<script type="text/javascript">
+	
+	
+	var myGame = {
+		canvas : document.createElement("canvas"),
+        level1 : {
+            level1Background : new level1BackgroundObject,
+            level1GamePieces : {
+              milk : new MikeMilk(600,720),
+              rb1 : new recylingBin(700, 720),
+              pizza1: new pizzaBox(820,720),
+              bag1: new bagOfCans(1100, 720),
+              mike2 : new MikeMilk(1400,720),
+              wine1: new wineBottle(1600,720),
+              trash : new trashCan(2000,720),
+              mike3 : new MikeMilk(2500,720),
+              trash2 : new trashCan(3000,720),
+              mike4 : new MikeMilk(4000,720),
+              trash3 : new trashCan(4100,720),
+              wine2: new wineBottle(4200,720),
+              mike5 : new MikeMilk(5000,720),
+              wine3: new wineBottle(5500,720),
+              trash4 : new trashCan(3000,720),
+              trash5 : new trashCan(6000,720),
+              mike6 : new MikeMilk(7000,720),
+              pizza9: new pizzaBox(8000,720),
+              trash6 : new trashCan(9000,720),
+              pizza2: new pizzaBox(1000,720),
+              trash7 : new trashCan(12000,720),
+              bag2: new bagOfCans(12500, 720),
+              trash8 : new trashCan(13000,720),
+              pizza3: new pizzaBox(1400,720),
+              trash9 : new trashCan(15000,720),
+              trash10 : new trashCan(16000,720),
+              mike7 : new MikeMilk(1700,720),
+              trash11 : new trashCan(19000,720),
+              pizza4: new pizzaBox(18000,720),
+              trash12 : new trashCan(21000,720),
+              bag3: new bagOfCans(22000, 720),
+
+            },
+            buildMap : function(){
+            },
+            levelMaker : function(){
+                myGame.level1.level1Background.draw();
+                for (var gameObject in myGame.level1.level1GamePieces){
+                    if(myGame.level1.level1GamePieces[gameObject].visible && viewPoint.inFrame(myGame.level1.level1GamePieces[gameObject])){
+                        myGame.level1.level1GamePieces[gameObject].draw();
+                    }
+                } 
+            },
+            finishLine : 9660,
+            
+        },
+        currentLevel :1,
+		start : function() {
+			this.canvas.width= 1800;
+			this.canvas.height= 885;
+			this.context = this.canvas.getContext('2d');
+			document.body.insertBefore(this.canvas, document.body.childNodes[0]);
+			this.interval = setInterval(update, 10);
+			window.addEventListener('keydown', function (e) {
+        		myGame.keys = (myGame.keys || []);
+        		myGame.keys[e.keyCode] = true;
+    		})
+    		window.addEventListener('keyup', function (e) {
+        		myGame.keys[e.keyCode] = false; 
+    		})
+		},
+        stop : function() {
+        clearInterval(this.interval); }
+		
+	}
+	
+	function init(){
+		myGame.start();
+        myGame.level1.buildMap();
+		
+	}
+	
+	function update(){
+		viewPoint.camera(Jeff, myGame.context);
+ 
+        if(myGame.currentLevel ==1){
+            myGame.level1.levelMaker();
+            Jeff.draw(myGame.level1.level1GamePieces);
+            if(Jeff.xaxis >= myGame.level1.finishLine){
+                cashIn();
+            }
+        }
+        
+		
+		//document.getElementById("display").innerHTML = "Your score is: " + highscore;
+		//document.getElementById("pickups").innerHTML = "Your pickups amount is: " + pickups;
+		
+		
+	}
+	
+	brian = new dude(); //Main Character
+	myFloor = new floor(400,400,400,100);//Main platform -> testing collision
+	myFloor2 = new floor(600,400,100,100);//Main platform -> testing collision
+
+	
+	Jeff = new Jeff({
+		context: myGame.canvas.getContext("2d"),
+		width: 600,
+		height: 200,
+		numberOfFrames: 4,
+		ticksPerFrame: 15,
+		xaxis: 100,
+		yaxis: 30
+		})
+    
+	var garretBackground1 = new Image;
+		garretBackground1.src = "images/Level_1_v2.png";
+	
+	
+	var viewPoint ={
+		x1Point : (1920 /2) - 500,
+		x2Point : (1920/2) + 400,
+		viewPointClearStart: 0,
+        viewPointClearEnd: 1920,
+		moveCameraRight: function(){
+			viewPoint.x1Point += 6;
+			viewPoint.x2Point += 6;
+			viewPoint.viewPointClearStart +=6;
+            viewPoint.viewPointClearEnd +=6;
+			myGame.context.translate(- 6,0);
+			//updatehighscore();     //his is causing lag on camera motion                   
+		},
+		moveCameraLeft : function(){
+			viewPoint.x1Point -= 6;
+			viewPoint.x2Point -= 6;
+			viewPoint.viewPointClearStart -= 6;
+            viewPoint.viewPointClearEnd -= 6;
+			myGame.context.translate(6,0);
+		},
+		centerCamera : function(gameObject){
+            
+			if(gameObject.xaxis <= viewPoint.x1Point && this.viewPointClearStart >0){
+				viewPoint.moveCameraLeft();
+			}else if((gameObject.xaxis + gameObject.fakeWidth) >= viewPoint.x2Point && (this.viewPointClearStart + 1920) < myGame.level1.level1Background.length){
+				viewPoint.moveCameraRight();
+			}
+		},
+		camera : function(gameObject, context){
+			viewPoint.centerCamera(gameObject);
+			context.clearRect(this.viewPointClearStart,0, (this.viewPointClearStart + 1920),900)
+			
+		},
+		gameMaker : function (){
+			var level1 = {};
+            var level2 = {};
+			
+		},
+        inFrame :function (gamePiece){
+            if(gamePiece.xaxis >= this.viewPointClearStart && gamePiece.xaxis <= this.viewPointClearEnd){
+                return true;
+            }
+        }
+		
+	}
+    
+    function cashIn(){
+        for(var item =0; item <Jeff.inventory.length;item++){
+            console.log(Jeff.inventory[item]);
+        }
+    }
+
+	function SaveCurrentScoreToCookie(){
+		
+		//alert(highscore);
+		
+		//EddyHighscore = highscore
+		//document.cookie = 'EddyHighscore='+EddyHighscore;
+		document.cookie="EddyHighscore= " + highscore + ";path=/";
+		
+		
+
+	}
+
+    
+
+
+	</script>
+	</body>
+</html>

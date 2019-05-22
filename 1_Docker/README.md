@@ -510,19 +510,19 @@ CONTAINER ID    IMAGE               COMMAND                  CREATED         STA
 f328ba89a889    broken-image:v2     "/bin/sh -c 'npm sta�"   2 seconds ago   Up 2 seconds   0.0.0.0:3000->3000/tcp   jolly_clarke
 ```
 ![](./4_ContainerManagement/html/static/images/broken.png)
-For some reason, the page isn't full screen. Let's get into the container and checkout the html. We can start a shell as a new process in the container with the [docker exec](https://docs.docker.com/engine/reference/commandline/exec/).
+
+For some reason our webserver still isn't working properly. From the error we can derive the needed file is missing on container. Let's get into the container and see what's going on. We can start a shell as a new process in the container with the [docker exec](https://docs.docker.com/engine/reference/commandline/exec/).
 
 ```
-$ docker exec -it f328ba89a889 /bin/sh
-# vi html/index.html
+1_Docker/4_ContainerManagement$ docker exec -it broken /bin/sh
+/nodeApp# ls html
+index.foo  static
 
-// change
-<asdfasdf>
-  <div id="slice_1" class="slice">^M
+// Looks like I have a typo. index.foo should be index.html
 
-// to 
-<body>
-  <div id="slice_1" class="slice">^M
+/nodeApp# mv html/index.foo html/index.html
 ```
+
+If we refresh the webpage, we should now see the expected results.
 
 
