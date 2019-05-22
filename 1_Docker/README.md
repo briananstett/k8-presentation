@@ -195,7 +195,7 @@ First we need to re-tag our image we made in the last step in order to *push* ou
 
 ```
 // hostname/component1/component2/:tag
-// us.gcr.io/j-1794/activation2/:v1
+// us.gcr.io/g-1575-k8-workshop/imagename/:v1
 ```
 
 To use our public registry, we have to follow a certain image name pattern. Let's re-tag our earlier image.
