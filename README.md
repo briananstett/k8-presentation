@@ -9,7 +9,7 @@ In the era of cloud and cluster computing, [Containers](https://www.docker.com/r
 
 --- 
 ## Next workshop
-* Mon May 22, 2019 12:00pm - 1:30pm (EDT) - Thunderbird 2
+* Wed May 22, 2019 12:00pm - 1:30pm (EDT) - Thunderbird 3
 
 ---
 ## Table of Contents
