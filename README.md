@@ -140,7 +140,7 @@ gke-24g-workshop  us-central1-a  1.12.7-gke.10   35.184.96.245  n1-standard-4  1
 ```
 Get your token and certificate authority for your user
 ```
-gcloud container clusters get-credentials gke-24g-workshop
+gcloud container clusters get-credentials gke-24g-workshop --region us-central1-a
 ```
 
 confirm set up was successful
