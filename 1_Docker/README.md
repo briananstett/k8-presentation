@@ -16,7 +16,7 @@ Pleaes follow the prerequisite instructions [here](../README.md) to install `Doc
 
 "Images are the recipe, a container is the cake." For more indepth information about images, see [this article](https://docs.docker.com/v17.09/engine/userguide/storagedriver/imagesandcontainers/).
 
-Docker builds images by reading the instructions from a `Dockerfile`. A `Dockerfile` is a text document that contains all the commands a user could call on the command line to assemble an image. Think of a Docker image as *class* in object oriented programming, from which we can instantiate our continers from. 
+Docker builds images by reading the instructions from a `Dockerfile`. A `Dockerfile` is a text document that contains all the commands a user could call on the command line to assemble an image. Think of a Docker image as *class* in object oriented programming, from which we can instantiate our containers from.
 
 ### Building a Dockerfile
 * Dockerfile documentation can be found [here](https://docs.docker.com/engine/reference/builder/).
@@ -195,7 +195,7 @@ First we need to re-tag our image we made in the last step in order to *push* ou
 
 ```
 // hostname/component1/component2/:tag
-// us.gcr.io/j-1794/activation2/:v1
+// us.gcr.io/g-1575-k8-workshop/imagename/:v1
 ```
 
 To use our public registry, we have to follow a certain image name pattern. Let's re-tag our earlier image.

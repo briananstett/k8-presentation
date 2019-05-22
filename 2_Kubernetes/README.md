@@ -50,10 +50,10 @@ spec:
 Let's create our first pod
 ```
 If you didn't clone the repo
-2_Kubernetes/1_Pods$ kubectl create -f https://bitbucket.org/briananstett/k8-24g-workshop/raw/66e539947a51e645474a635cbf1603c209a591fc/2_Kubernetes/1_Pods/pod.yml
+2_Kubernetes/1_Pods$ kubectl apply -f https://bitbucket.org/briananstett/k8-24g-workshop/raw/66e539947a51e645474a635cbf1603c209a591fc/2_Kubernetes/1_Pods/pod.yml
 
 If you cloned the repo
-2_Kubernetes/1_Pods$ kubectl create -f pod.yml
+2_Kubernetes/1_Pods$ kubectl apply -f pod.yml
 ```
 
 We can see our pod running by using the [get](https://kubernetes.io/docs/reference/generated/kubectl/kubectl-commands#get) command.
@@ -139,7 +139,11 @@ Now let's curl the Jeff Pod. Notice we can use the pod's IP as both container sh
 
 *Clean up from this exercise.*
 ```
-2_Kubernetes/1_Pods$ kubectl delete pods deleteme jeff-manual-pod
+If you didn't clone the repo
+2_Kubernetes/1_Pods$ kubectl delete -f https://bitbucket.org/briananstett/k8-24g-workshop/raw/66e539947a51e645474a635cbf1603c209a591fc/2_Kubernetes/1_Pods/pod.yml
+
+If you cloned the repo
+2_Kubernetes/1_Pods$ kubectl delete -f pod.yml
 ```
 
 ---
@@ -172,10 +176,10 @@ spec:
 Let's create a new Jeff pod and expose it via a service
 ```
 // If you didnt' clone the repo
-$ kubectl create -f https://bitbucket.org/briananstett/k8-24g-workshop/raw/546d70c0cd106d61297ece2a809b98e2f4b3618a/2_Kubernetes/2_Services/podAndService.yml
+$ kubectl apply -f https://bitbucket.org/briananstett/k8-24g-workshop/raw/546d70c0cd106d61297ece2a809b98e2f4b3618a/2_Kubernetes/2_Services/podAndService.yml
 
 // If you did clone the repo
-2_Kubernetes/2_Services$ kubectl create -f podAndService.yml
+2_Kubernetes/2_Services$ kubectl apply -f podAndService.yml
 pod/jeff-pod created
 service/jeff-service created
 ```
@@ -209,10 +213,10 @@ If we navigate to the EXTERNAL-IP, we'll see our Jeff application's home page. W
 Lets create our deployment and service.
 ```
 // If you didn't clone the repo
-$ kubectl create -f https://bitbucket.org/briananstett/k8-24g-workshop/raw/a9ef1116888b259f5aec0ba490ed3b882eca4e29/2_Kubernetes/3_Deployments/podDeploymentService.yml
+$ kubectl apply -f https://bitbucket.org/briananstett/k8-24g-workshop/raw/a9ef1116888b259f5aec0ba490ed3b882eca4e29/2_Kubernetes/3_Deployments/podDeploymentService.yml
 
 // If you did clone the repo
-2_Kubernetes/3_Deployments$ kubectl create -f 3_Deployments/podDeploymentService.yml
+2_Kubernetes/3_Deployments$ kubectl apply -f 3_Deployments/podDeploymentService.yml
 deployment.extensions/jeff-deployment created
 service/jeff-service created
 ```
@@ -314,7 +318,7 @@ spec:
       terminationGracePeriodSeconds: 30
 ```
 
-We can see the state of our deployment starting to change
+We can see the state of our deployment startchange
 
 ```
 2_Kubernetes/3_Deployments$ kubectl get pods
@@ -330,7 +334,7 @@ jeff-deployment-6bfb858dd5-g66vj         0/1       ContainerCreating   0        
 Let's deploy a new image. We can do this by, again, using the *edit* command
 
 ```
-2_Kubernetes/3_Deployments$ kubectl edit deployment httpd-deployment
+2_Kubernetes/3_Deployments$ kubectl edit deployment jeff-deployment
 // Edit the lines with *
 
 apiVersion: extensions/v1beta1
@@ -391,7 +395,7 @@ spec:
       terminationGracePeriodSeconds: 30
 ```
 
-and watch as the deployment gradually rolls out the new image, never completely taking our  deployment down. This is called *rolling update*.
+and watch as the deployment gradually rolls out the new image, never completely taking our deployment down. This is called *rolling update*.
 
 ```
 2_Kubernetes/3_Deployments$ kubectl get pods --watch
@@ -405,7 +409,7 @@ jeff-deployment-6bfb858dd5-2dd7k         0/1       ContainerCreating   0        
 jeff-deployment-6bfb858dd5-ljh5h         1/1       Running             0          4s
 ```
 
-Like any time you introduce new code into your environment there are situations in which you might want to *rollback* to a previous state in your application. We can use the [rollout](https://kubernetes.io/docs/concepts/workloads/controllers/deployment/#rolling-back-a-deployment) to undo our latest revision.
+Like any time you introduce new code into your environment, there are situations in which you might want to *rollback* to a previous state in your application. We can use the [rollout](https://kubernetes.io/docs/concepts/workloads/controllers/deployment/#rolling-back-a-deployment) command to undo our latest revision.
 
 ```
 2_Kubernetes/3_Deployments$ rollout undo deployment jeff-deployment
@@ -420,6 +424,7 @@ jeff-deployment-f94c77886-jjj90   1/1     Running       0          4s
 
 ---
 ## Horizontal Pod Autoscaler
+*To follow these examples, please use section 4_AutoScaling*
 
 [Horizontal Pod Autoscaler](https://kubernetes.io/docs/tasks/run-application/horizontal-pod-autoscale-walkthrough/) automatically scales the number of pods in a replication controller, deployment or replica set based on observed CPU utilization (or, with beta support, on some other, application-provided metrics).
 
@@ -430,66 +435,72 @@ apiVersion: autoscaling/v2beta1
 kind: HorizontalPodAutoscaler
 metadata:
   labels:
-    name: apache-hpa
-  name: apache-hpa
+    name: jeff-hpa
+  name: jeff-hpa
 spec:
   scaleTargetRef:
     apiVersion: apps/v1
     kind: Deployment
-    name: apache-deployment
-  minReplicas: 2
-  maxReplicas: 10
+    name: jeff-deployment
+  minReplicas: 1
+  maxReplicas: 8
   metrics:
   - type: Resource
     resource:
       name: cpu
-      targetAverageUtilization: 50
+      targetAverageUtilization: 5
 ```
 
 Create our deployment, service, and HPA by
 
 ```
 // If you didn't clone the repo
-<>
+2_Kubernetes/4_AutoScaling$ kubectl apply -f https://bitbucket.org/briananstett/k8-24g-workshop/src/master/2_Kubernetes/4_AutoScaling/deploymentServiceHPA.yml
 
 // If you cloned the repo
-$ kubectl create -f 4_AutoScaling/deploymentServiceHPA.yml
+2_Kubernetes/4_AutoScaling$ kubectl apply -f 4_AutoScaling/deploymentServiceHPA.yml
 ```
 
-We can see the status of our HPA by
+We can see the status of our HPA by running
 
 ```
-$ kubectl get hpa
-NAME         REFERENCE                      TARGETS   MINPODS   MAXPODS   REPLICAS   AGE
-apache-hpa   Deployment/apache-deployment   0%/50%    2         10        2          18m
-
+2_Kubernetes/4_AutoScaling$ kubectl get hpa
+NAME       REFERENCE                    TARGETS   MINPODS   MAXPODS   REPLICAS   AGE
+jeff-hpa   Deployment/jeff-deployment   3%/50%    1         8         2          2m5s
 ```
 
-Get the external IP for this example
+Grab our service's external IP again
 
 ```
-$ kubectl get services
-NAME                  TYPE           CLUSTER-IP      EXTERNAL-IP     PORT(S)          AGE
-apache-service        LoadBalancer   10.19.246.107   35.226.239.84   80:30823/TCP     16m
+2_Kubernetes/4_AutoScaling$ kubectl get services
+NAME            TYPE           CLUSTER-IP      EXTERNAL-IP     PORT(S)          AGE
+jeff-service    LoadBalancer   10.19.246.107   35.226.239.84   80:30823/TCP     16m
 ```
 
-Now let's start to send some traffic its way. In a seperate shell run the following command.
+Now let's try to simulate high traffic by navigating to the `/scale.php` script on out site. This script performs a semi intensive computing and should raise the CPU consumption of the pod. In a seperate shell run the following command.
 
 ```
-$ while true; do curl 35.226.239.84; done
+$ while true; do curl http://35.226.239.84/scale.php; done
 ```
 
 After about a minute, we see the hpa reporting higher CPU utilization and begin to scale the deployment for us.
 
 ```
-$ kubectl get hpa
-NAME         REFERENCE                      TARGETS    MINPODS   MAXPODS   REPLICAS   AGE
-apache-hpa   Deployment/apache-deployment   107%/50%   2         10        3         13m
+2_Kubernetes/4_AutoScaling$ kubectl get hpa
+NAME       REFERENCE                      TARGETS    MINPODS   MAXPODS   REPLICAS   AGE
+jeff-hpa   Deployment/jeff-deployment     107%/50%   2         10        4         13m
 
 $kubectl get pods
 NAME                                      READY     STATUS    RESTARTS   AGE
-apache-deployment-79769b55c5-jxb4n        1/1       Running   0          14m
-apache-deployment-79769b55c5-t5cgk        1/1       Running   0          14m
-apache-deployment-79769b55c5-x6ccl        1/1       Running   0          42s
+jeff-deployment-79769b55c5-jxb4n        1/1       Running   0          14m
+jeff-deployment-79769b55c5-t5cgk        1/1       Running   0          14m
+jeff-deployment-79769b55c5-x6ccl        1/1       Running   0          42s
+jeff-deployment-79769b55c5-au34g        1/1       Running   0          42s
 ```
 
+## Cleaning up
+If you are all done with the workshop, please delete your namespace. This will subsequently delete all resources inside the namespace.
+
+```
+$ kubectl delete namespace <your namespace you created>
+```

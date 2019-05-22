@@ -6,7 +6,11 @@ metadata:
     name: jeff-deployment
   name: jeff-deployment
 spec:
+<<<<<<< HEAD
   replicas: 3
+=======
+  replicas: 1
+>>>>>>> 0073c6d721adfe07c7f6e878d1657e21240e6638
   selector:
     matchLabels:
       name: jeff-pod
@@ -59,8 +63,8 @@ spec:
     apiVersion: apps/v1
     kind: Deployment
     name: jeff-deployment
-  minReplicas: 2
-  maxReplicas: 10
+  minReplicas: 1
+  maxReplicas: 8
   metrics:
   - type: Resource
     resource:
