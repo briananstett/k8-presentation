@@ -1,15 +1,15 @@
 # 24G Container Workshop
-In the era of cloud and cluster computing, [Containers](https://www.docker.com/resources/what-container) have become the standard unit of compute. All major Cloud providers offer some sort of managed container service, not to mention all the services that use containers underneath the hood (App Engine, GCE, etc.). The consistent environment, "run anywhere", context isolation characteristics of containers make them a perfect choice for [Cloud Native](https://pivotal.io/cloud-native) applications. Containers have also fueled the CI/CD fire, [allowing enterprises to safely iterate](https://cloud.google.com/kubernetes-engine/kubernetes-comic/) their prodcution software at extremely high velocity. 
+In the era of cloud and cluster computing, [Containers](https://www.docker.com/resources/what-container) have become the standard unit of compute. All major Cloud providers offer some sort of managed container service, not to mention all the services that use containers underneath the hood (App Engine, GCE, etc.). The consistent environment, "run anywhere", context isolation characteristics of containers make them a perfect choice for [Cloud Native](https://pivotal.io/cloud-native) applications. Containers have also fueled the CI/CD fire, [allowing enterprises to safely iterate](https://cloud.google.com/kubernetes-engine/kubernetes-comic/) their production software at extremely high velocity. 
 
 --- 
 ## Kubernetes at 24G
-* We have been running Kubernetes in production for over a year now. We have multiple clusters on multiple clouds and on average have between 200 and 300 containers running at any given momment. 
-* We have CI/CD pipelines that automatically create new Docker images and deploy them to the correct cluster. Kubernetes then performs a [Rolling Update](https://kubernetes.io/docs/tutorials/kubernetes-basics/update/update-intro/) to safely delete old instances of the code, replacing them with the new. Kubernetes performs constent health checks and will rollback to the previous version if there are issues. This all done while guaranteeing high availability (no down time). 
-* We've implemented multiple [operators](https://kubernetes.io/docs/concepts/extend-kubernetes/api-extension/custom-resources/) on top of Kubernetes that automate tasks such as [SSL certification registrion](https://github.com/jetstack/cert-manager) and the creation of [DNS entries](https://github.com/helm/charts/tree/master/stable/external-dns).
+* We have been running Kubernetes in production for over a year now. We have multiple clusters on multiple clouds and on average have between 200 and 300 containers running at any given moment. 
+* We have CI/CD pipelines that automatically create new Docker images and deploy them to the correct cluster. Kubernetes then performs a [Rolling Update](https://kubernetes.io/docs/tutorials/kubernetes-basics/update/update-intro/) to safely delete old instances of the code, replacing them with the new. Kubernetes performs constant health checks and will rollback to the previous version if there are issues. This all done while guaranteeing high availability (no down time). 
+* We've implemented multiple [operators](https://kubernetes.io/docs/concepts/extend-kubernetes/api-extension/custom-resources/) on top of Kubernetes that automate tasks such as [SSL certification registration](https://github.com/jetstack/cert-manager) and the creation of [DNS entries](https://github.com/helm/charts/tree/master/stable/external-dns).
 
 --- 
 ## Next workshop
-* Mon May 20, 2019 12:30pm - 2pm (EDT) - Thunderbird 2
+* Mon May 22, 2019 12:00pm - 1:30pm (EDT) - Thunderbird 2
 
 ---
 ## Table of Contents
@@ -143,7 +143,7 @@ Get your token and certificate authority for your user
 gcloud container clusters get-credentials gke-24g-workshop
 ```
 
-confirm set up was
+confirm set up was successful
 ```
 kubectl get nodes
 NAME                                              STATUS   ROLES    AGE     VERSION
