@@ -21,6 +21,15 @@ In the era of cloud and cluster computing, [Containers](https://www.docker.com/r
 
 ## Prerequisites
 ---
+### Setup for the Docker workshop
+In order to complete the Docker workshop you need Docker and Nodejs installed. If you have a [GCP](http://cloud.google.com/) account you can run the following command in the GCP Cloud Shell
+
+* cloud.google.com > sign into your account > open your "Cloud Shell" by clicking the "Activate Cloud Shell" button in the upper right of the console. > RUn the following command.
+![](https://cloud.google.com/shell/docs/images/start-cloud-shell-session.gif)
+
+```bash
+
+```
 
 ### Install and config GCP's CLI SDK. 
 #### If you don't have `gcloud` installed on your machine
