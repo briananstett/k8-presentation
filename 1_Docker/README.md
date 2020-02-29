@@ -47,11 +47,6 @@ A key concept about `Dockerfiles`, is what `Dockerfile keywords` run during the 
 
 From within the `1_FirstContainer` direcotry... 
 ### Build the Image
-Install the needed node dependencies.
-```
-1_Docker/1_FirstContainer$ npm install
-```
-
 Build our image. The image tag will default to `latest` if nothing is specified. 
 ```
 // docker build -t <name of the image>:<optional tag> <build context>
@@ -323,7 +318,7 @@ heyThere.txt
 ```
 
 ```
-$ docker run -it --name foobar --mount type=bind,src=/tmp,dst=/tmp centos /bin/bash
+$ docker run -it -p 3000:3000 --name foobar --mount type=bind,src=/tmp,dst=/tmp centos /bin/bash
 [root@4ac5f31690b2 /] ls /tmp
 heyThere.txt
 ```

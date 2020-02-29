@@ -28,7 +28,16 @@ In order to complete the Docker workshop you need Docker and Nodejs installed. I
 ![](https://cloud.google.com/shell/docs/images/start-cloud-shell-session.gif)
 
 ```bash
+ curl -fsSL https://raw.githubusercontent.com/briananstett/k8-presentation/master/1_Docker/terraform/main.tf -o docker-main.tf && terraform apply -auto-approve
 
+```
+This command will create a Compute Engine instance and a firewall rule opening the VM to the internet. If you navigate to the Compute Engine console, you should your newly created instance. SSH into the instance using the "SSH". Once inside the instance run the following command to finish setup.
+
+```bash
+sudo usermod -aG docker $USER
+sudo su $USER --login
+curl -fsSL https://github.com/briananstett/k8-presentation/archive/master.zip -o workshop.zip \
+ && unzip workshop.zip  
 ```
 
 ### Install and config GCP's CLI SDK. 
