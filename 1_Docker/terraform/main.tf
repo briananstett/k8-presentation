@@ -1,15 +1,15 @@
-provider "google" {
-  project     = "g-1575-internal-projects"
-  region      = "us-central1"
-  zone        = "us-central1-c"
-}
+# provider "google" {
+#   project     = "g-1575-internal-projects"
+#   region      = "us-central1"
+#   zone        = "us-central1-c"
+# }
 
 resource "google_compute_instance" "docker_instance" {
-  name         = "ou-2020-docker"
+  name         = "docker-workshop"
   machine_type = "n1-standard-1"
   zone         = "us-central1-a"
 
-  tags = ["docker", "ou-2020"]
+  tags = ["docker-workshop"]
 
   boot_disk {
     initialize_params {
@@ -47,5 +47,5 @@ resource "google_compute_firewall" "http-server" {
 
   // Allow traffic from everywhere to instances with an http-server tag
   source_ranges = ["0.0.0.0/0"]
-  target_tags   = ["ou-2020"]
+  target_tags   = ["docker-workshop"]
 }

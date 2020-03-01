@@ -28,7 +28,8 @@ In order to complete the Docker workshop you will need Docker and Nodejs install
 ![](https://cloud.google.com/shell/docs/images/start-cloud-shell-session.gif)
 
 ```bash
- curl -fsSL https://raw.githubusercontent.com/briananstett/k8-presentation/master/1_Docker/terraform/main.tf -o docker-main.tf && terraform apply -auto-approve
+ curl -fsSL https://raw.githubusercontent.com/briananstett/k8-presentation/master/1_Docker/terraform/main.tf -o ~/docker-workshop/main.tf \
+  && terraform apply -auto-approve ~/k8-workshop
 
 ```
 This command will create a Compute Engine instance and a firewall rule opening the VM to the internet. If you navigate to the Compute Engine console, you should see your newly created instance. SSH into the instance using the "SSH" button. Once inside the instance, run the following command to finish setup.
@@ -40,139 +41,17 @@ curl -fsSL https://github.com/briananstett/k8-presentation/archive/master.zip -o
  && unzip workshop.zip  
 ```
 
-### Install and config GCP's CLI SDK. 
-#### If you don't have `gcloud` installed on your machine
+### Setup for the Kubernetes workshop
+In order to complete the Kubernetes workshop you will need a Kubernetes cluster. If you already have access to a cluster feel free to use it. If not, the following instructions will help you setup a cluster on GCP. Run the following command in the GCP Cloud Shell of your project. Not it will take a few minutes to provision your cluster.
 
-[Linux, Windows, Mac installation documentation](https://cloud.google.com/sdk/docs/quickstarts)
-
-Initialize the client
-```
-$ gcloud init
-```
-
-```
-To continue, you must log in. Would you like to log in (Y/n)? Y
-```
-(Optinal) if at any time you are prompted to specify a default region, use `us-central1-a`
-
-Select your project. Please use project `g-1575-k8-workshop` 
-```
-Pick cloud project to use: 
-[1] project-1
-[2] project-2
-Please enter numeric choice
+```bash
+curl -fsSL https://raw.githubusercontent.com/briananstett/k8-presentation/master/1_Kubernetes/terraform/main.tf -o ~/k8-workshop/main.tf \
+  && terraform apply -auto-approve ~/k8-workshop \
+  gcloud container clusters get-credentials workshop-cluster --region us-central1-a \
+  alias kube=kubectl
 ```
 
-#### If you already have `gcloud` installed on your machine
-Initialize the client
-```
-$ gcloud init
-```
-(Optinal) if at any time you are prompted to specify a default region, use `us-central1-a`
-Add a new configuration
-```
-Pick configuration to use:
-[1] Re-initialize this configuration [default] with new settings 
-[2] Create a new configuration
-Please enter your numeric choice:  
-```
-Enter a name of the new configuration
-```
-Enter configuration name. Names start with a lower case letter and 
-contain only lower case letters a-z, digits 0-9, and hyphens '-':
-```
-Select your project. Please use project `g-1575-k8-workshop` 
-```
-Choose the account you would like to use to perform operations for 
-this configuration:
-[1] 477597344109-compute@developer.gserviceaccount.com
-[2] john.smith@24g.com
-[3] Log in with a new account
-Please enter your numeric choice:  
-```
 
-### Install Docker
-* [Linux](https://docs.docker.com/install/linux/docker-ce/centos/)
-    * You may need to add the `docker` group to your user in order to interact with the `/var/run/docker.sock` file. 
-* [Mac](https://docs.docker.com/docker-for-mac/install/)
-* [Windows](https://docs.docker.com/docker-for-windows/install/)
-
-Confirm Docker is working on your machine
-```
-$ docker version
-  Client:
-  Version:           18.09.1
-  API version:       1.39
-  Go version:        go1.10.6
-  Git commit:        4c52b90
-  Built:             Wed Jan  9 19:35:31 2019
-  OS/Arch:           linux/amd64
-  Experimental:      false
-
-  Server: Docker Engine - Community
-  Engine:
-    Version:          18.09.1
-    API version:      1.39 (minimum version 1.12)
-    Go version:       go1.10.6
-    Git commit:       4c52b90
-    Built:            Wed Jan  9 19:02:44 2019
-    OS/Arch:          linux/amd64
-    Experimental:     false
-```
-
-### Setup Authentication to Google Container Registry
-Add a Docker credential helper
-```
-$ gcloud auth configure-docker
-
-gcloud's Docker credential helper can be configured but it will not work until this is corrected.
-The following settings will be added to your Docker config file 
-located at [/root/.docker/config.json]:
-{
-  "credHelpers": {
-    "gcr.io": "gcloud", 
-    "us.gcr.io": "gcloud", 
-    "eu.gcr.io": "gcloud", 
-    "asia.gcr.io": "gcloud", 
-    "staging-k8s.gcr.io": "gcloud", 
-    "marketplace.gcr.io": "gcloud"
-  }
-}
-
-Do you want to continue (Y/n)?  
-```
-
-### Set up `kubectl`
-#### Install `kubectl`
-* [Linux Installation](https://kubernetes.io/docs/tasks/tools/install-kubectl/#install-kubectl-on-linux)
-* [Mac Installation](https://kubernetes.io/docs/tasks/tools/install-kubectl/#install-kubectl-on-macos)
-* [Windows Installation](https://kubernetes.io/docs/tasks/tools/install-kubectl/#install-kubectl-on-windows)
-
-#### Configure `kubectl`
-
-List the Kubernetes clusters in your project
-```
-gcloud container clusters list
-NAME              LOCATION       MASTER_VERSION  MASTER_IP      MACHINE_TYPE   NODE_VERSION   NUM_NODES  STATUS
-gke-24g-workshop  us-central1-a  1.12.7-gke.10   35.184.96.245  n1-standard-4  1.12.7-gke.10  2          RUNNING
-```
-Get your token and certificate authority for your user
-```
-gcloud container clusters get-credentials gke-24g-workshop --region us-central1-a
-```
-
-confirm set up was successful
-```
-kubectl get nodes
-NAME                                              STATUS   ROLES    AGE     VERSION
-gke-gke-24g-workshop-default-pool-2d9d42c6-1vxp   Ready    <none>   3m41s   v1.12.7-gke.10
-gke-gke-24g-workshop-default-pool-a4b67bed-zxhb   Ready    <none>   3m37s   v1.12.7-gke.10
-```
-
-### Install Node.js
-* [Linux installation](https://nodejs.org/en/download/package-manager/#debian-and-ubuntu-based-linux-distributions-enterprise-linux-fedora-and-snap-packages)
-* [Mac installation](https://nodejs.org/en/download/)
-* [Windows installation](https://nodejs.org/en/download/)
 
 ## Slides
 * Feel free to follow along with the [slides](https://docs.google.com/presentation/d/1OQYcl3PwPM9NJ3AbExLV9A8AWbCEzbxj0VceIOhPnyY/edit#slide=id.p).
