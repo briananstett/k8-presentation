@@ -37,8 +37,8 @@ resource "google_compute_instance" "docker_instance" {
   }
 }
 
-resource "google_compute_firewall" "http-server" {
-  name    = "default-allow-http"
+resource "google_compute_firewall" "docker-allow-all" {
+  name    = "docker-workshop-allow-all"
   network = "default"
 
   allow {

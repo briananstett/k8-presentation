@@ -1,8 +1,8 @@
-provider "google" {
-  project     = "g-1573-training"
-  region      = "us-central1"
-  zone        = "us-central1-c"
-}
+# provider "google" {
+#   project     = "g-1573-training"
+#   region      = "us-central1"
+#   zone        = "us-central1-c"
+# }
 
 resource "google_container_cluster" "primary" {
   name               = "workshop-cluster"
@@ -27,10 +27,24 @@ resource "google_container_cluster" "primary" {
     metadata = {
       disable-legacy-endpoints = "true"
     }
+    tags = ["kubernetes-workshop"]
   }
 
   timeouts {
     create = "30m"
     update = "40m"
   }
+}
+
+resource "google_compute_firewall" "k8-allow-all" {
+  name    = "k8-workshop-allow-all"
+  network = "default"
+
+  allow {
+    protocol = "tcp"
+  }
+
+  // Allow traffic from everywhere to instances with an http-server tag
+  source_ranges = ["0.0.0.0/0"]
+  target_tags   = ["kubernetes-workshop"]
 }

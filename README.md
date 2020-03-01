@@ -21,37 +21,78 @@ In the era of cloud and cluster computing, [Containers](https://www.docker.com/r
 
 ## Prerequisites
 ---
-### Setup for the Docker workshop
-In order to complete the Docker workshop you will need Docker and Nodejs installed. You can install these things manually or if you have a [GCP](http://cloud.google.com/) account, you can run the following command in the GCP Cloud Shell to provision 
+### Setup a GCP project
+This workshop is meant to be completed using [Google Cloud Platform](http://cloud.google.com/). Before you can provision the required infrastructure to complete the workshop, you must [create a GCP Project](https://cloud.google.com/resource-manager/docs/creating-managing-projects) (if you don't have one already). 
 
-* cloud.google.com > sign into your account > open your "Cloud Shell" by clicking the "Activate Cloud Shell" button in the upper right of the console. > RUn the following command.
 ![](https://cloud.google.com/shell/docs/images/start-cloud-shell-session.gif)
+Once you have your project, you need to configure your "Cloud Shell". Open your Cloud Shell and run the following comming.
+```
+gcloud config set project <project id>
+```
+
+### Setup for the Docker workshop
+In order to complete the Docker workshop you will need a machine with Docker and Nodejs installed. Run the following command in the GCP Cloud Shell to provision the required resources. This command will create a Compute Engine instance and a firewall rule opening the VM to the internet. 
 
 ```bash
- curl -fsSL https://raw.githubusercontent.com/briananstett/k8-presentation/master/1_Docker/terraform/main.tf -o ~/docker-workshop/main.tf \
-  && terraform apply -auto-approve ~/k8-workshop
-
+curl -fsSL https://raw.githubusercontent.com/briananstett/k8-presentation/master/1_Docker/terraform/main.tf \
+  -o ~/docker-terraform/main.tf --create-dirs
+cd ~/docker-terraform
+terraform init
+terraform apply -auto-approve
+cd ~/
 ```
-This command will create a Compute Engine instance and a firewall rule opening the VM to the internet. If you navigate to the Compute Engine console, you should see your newly created instance. SSH into the instance using the "SSH" button. Once inside the instance, run the following command to finish setup.
+
+Once the instance finishes provisioning, if you navigate to the Compute Engine console, you should see your newly created instance. SSH into the instance using the "SSH" button. Once *inside the instance*, run the following command to finish setup.
 
 ```bash
 sudo usermod -aG docker $USER
 sudo su $USER --login
-curl -fsSL https://github.com/briananstett/k8-presentation/archive/master.zip -o workshop.zip \
- && unzip workshop.zip  
+curl -fsSL https://github.com/briananstett/k8-presentation/archive/master.zip -o workshop.zip
+unzip workshop.zip
+rm workshop.zip
+```
+
+You can confirm Docker was installed correctly by running the following command.
+```
+docker version
 ```
 
 ### Setup for the Kubernetes workshop
-In order to complete the Kubernetes workshop you will need a Kubernetes cluster. If you already have access to a cluster feel free to use it. If not, the following instructions will help you setup a cluster on GCP. Run the following command in the GCP Cloud Shell of your project. Not it will take a few minutes to provision your cluster.
+In order to complete the Kubernetes workshop you will need a Kubernetes cluster. If you already have access to a cluster feel free to use it. If not, the following instructions will help you setup a cluster on GCP. Run the following command in the GCP Cloud Shell of your project. *Note it will take a few minutes to provision your cluster.*
 
 ```bash
-curl -fsSL https://raw.githubusercontent.com/briananstett/k8-presentation/master/1_Kubernetes/terraform/main.tf -o ~/k8-workshop/main.tf \
-  && terraform apply -auto-approve ~/k8-workshop \
-  gcloud container clusters get-credentials workshop-cluster --region us-central1-a \
-  alias kube=kubectl
+curl -fsSL https://raw.githubusercontent.com/briananstett/k8-presentation/master/2_Kubernetes/terraform/main.tf \
+  -o ~/k8-terraform/main.tf --create-dirs
+cd ~/k8-terraform
+terraform init
+terraform apply -auto-approve
+gcloud container clusters get-credentials workshop-cluster --region us-central1-a
+alias kube=kubectl
+cd ~/
+```
+You can confirm the Clutser was created and your `kubectl` CLI tool was confgiured correctly by running the following command.
+
+```
+kubectl get nodes
 ```
 
+### Tear down for Docker workshop
+Once you are finished with the Docker workshop. Run the following command in *Cloud Shell* to delete the GCP resources created.
 
+```
+cd ~/docker-terraform
+terraform destroy -auto-approve
+cd ~/
+```
+
+## Tear down for the Kubernetes workshop
+Once you are finished with the Kubernetes workshop. Run the following command in *Cloud Shell* to delete the GCP resources created.
+
+```
+cd ~/k8-terraform
+terraform destroy -auto-approve
+cd ~/
+```
 
 ## Slides
 * Feel free to follow along with the [slides](https://docs.google.com/presentation/d/1OQYcl3PwPM9NJ3AbExLV9A8AWbCEzbxj0VceIOhPnyY/edit#slide=id.p).
