@@ -3,13 +3,13 @@ In the era of cloud and cluster computing, [Containers](https://www.docker.com/r
 
 --- 
 ## Kubernetes at 24G
-* We have been running Kubernetes in production for over a year now. We have multiple clusters on multiple clouds and on average have between 200 and 300 containers running at any given moment. 
+* We have been running Kubernetes in production for almost two years now. We have multiple clusters on multiple clouds and on average have between 300 and 400 containers running at any given moment. 
 * We have CI/CD pipelines that automatically create new Docker images and deploy them to the correct cluster. Kubernetes then performs a [Rolling Update](https://kubernetes.io/docs/tutorials/kubernetes-basics/update/update-intro/) to safely delete old instances of the code, replacing them with the new. Kubernetes performs constant health checks and will rollback to the previous version if there are issues. This all done while guaranteeing high availability (no down time). 
 * We've implemented multiple [operators](https://kubernetes.io/docs/concepts/extend-kubernetes/api-extension/custom-resources/) on top of Kubernetes that automate tasks such as [SSL certification registration](https://github.com/jetstack/cert-manager) and the creation of [DNS entries](https://github.com/helm/charts/tree/master/stable/external-dns).
 
 --- 
 ## Next workshop
-* Wed May 22, 2019 12:00pm - 1:30pm (EDT) - Thunderbird 3
+* Tues March 3, 2020 3:00pm (EDT) - Oakland University
 
 ---
 ## Table of Contents
@@ -22,7 +22,7 @@ In the era of cloud and cluster computing, [Containers](https://www.docker.com/r
 ## Prerequisites
 ---
 ### Setup for the Docker workshop
-In order to complete the Docker workshop you need Docker and Nodejs installed. If you have a [GCP](http://cloud.google.com/) account you can run the following command in the GCP Cloud Shell
+In order to complete the Docker workshop you will need Docker and Nodejs installed. You can install these things manually or if you have a [GCP](http://cloud.google.com/) account, you can run the following command in the GCP Cloud Shell to provision 
 
 * cloud.google.com > sign into your account > open your "Cloud Shell" by clicking the "Activate Cloud Shell" button in the upper right of the console. > RUn the following command.
 ![](https://cloud.google.com/shell/docs/images/start-cloud-shell-session.gif)
@@ -31,7 +31,7 @@ In order to complete the Docker workshop you need Docker and Nodejs installed. I
  curl -fsSL https://raw.githubusercontent.com/briananstett/k8-presentation/master/1_Docker/terraform/main.tf -o docker-main.tf && terraform apply -auto-approve
 
 ```
-This command will create a Compute Engine instance and a firewall rule opening the VM to the internet. If you navigate to the Compute Engine console, you should your newly created instance. SSH into the instance using the "SSH". Once inside the instance run the following command to finish setup.
+This command will create a Compute Engine instance and a firewall rule opening the VM to the internet. If you navigate to the Compute Engine console, you should see your newly created instance. SSH into the instance using the "SSH" button. Once inside the instance, run the following command to finish setup.
 
 ```bash
 sudo usermod -aG docker $USER
