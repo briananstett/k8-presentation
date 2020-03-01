@@ -8,6 +8,9 @@ There are many ways to running Kubernetes. Self managed on your "on-prem" server
 #### Table of contents
 * [Prerequisites](../README.md)
 * [pods](#Pods)
+* [service](#Services)
+* [deployment](#Deployments)
+* [hpa](#Horizontal-Pod-Autoscaler)
 ----
 *This section of the workshop uses the `2_Kubernetes` sub-directory.*
 
