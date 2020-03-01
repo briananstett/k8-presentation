@@ -6,11 +6,7 @@ metadata:
     name: jeff-deployment
   name: jeff-deployment
 spec:
-<<<<<<< HEAD
-  replicas: 3
-=======
   replicas: 1
->>>>>>> 0073c6d721adfe07c7f6e878d1657e21240e6638
   selector:
     matchLabels:
       name: jeff-pod
@@ -28,7 +24,7 @@ spec:
     spec:
       containers:
       - name: jeff-container
-        image: us.gcr.io/g-1575-k8-workshop/jeff
+        image: briananstett/workshop
         ports:
           - containerPort: 80
         resources:

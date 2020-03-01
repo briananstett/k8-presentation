@@ -8,7 +8,7 @@ metadata:
 spec:
   containers:
   - name: jeff-container
-    image: us.gcr.io/g-1575-k8-workshop/jeff
+    image: briananstett/workshop
     ports:
       - containerPort: 80
     resources:

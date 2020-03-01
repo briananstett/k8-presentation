@@ -24,7 +24,8 @@ spec:
     spec:
       containers:
       - name: jeff-container
-        image: us.gcr.io/g-1575-k8-workshop/jeff:tomato
+        image: briananstett/workshop
+        # image: briananstett/workshop:tomato
         ports:
           - containerPort: 80
         resources:
