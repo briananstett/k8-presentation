@@ -179,11 +179,11 @@ d6a568e8ea6a   myimage   "/bin/sh -c npm start"   3 seconds ago    Up 1 second  
 
 [docker push](https://docs.docker.com/engine/reference/commandline/push/) is used to push an image to registry.
 
-For this example, we've already created a *public* registry so no credentials are required. Please use the `us.gcr.io/g-1575-k8-workshop` registry. If you wish to learn how to use private registries, checkout this [reference](https://docs.docker.com/engine/reference/commandline/login/).
+For this example, we've already created a *public* registry so no credentials are required. Please use the `24gcontainerworkshop` registry. If you wish to learn how to use private registries, checkout this [reference](https://docs.docker.com/engine/reference/commandline/login/).
 
-If you haven't done so already, make sure you have the GCP Docker auth helper installed.
+Log into the provided container registry by running the following command. Username is `24gcontainerworkshop` and the password is `workshop123`
 ```
-$ gcloud auth configure-docker
+$ docker login
 ```
 
 First we need to re-tag our image we made in the last step in order to *push* our image to our registry. We can use the [docker tag](https://docs.docker.com/engine/reference/commandline/tag/) command to do this. Let's tag our image to be pushed to our public registry. An image name is made up of slash-separated name components, prefixed by a registry hostname. 
