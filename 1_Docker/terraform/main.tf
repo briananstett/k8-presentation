@@ -1,8 +1,7 @@
-# provider "google" {
-#   project     = "g-1575-internal-projects"
-#   region      = "us-central1"
-#   zone        = "us-central1-c"
-# }
+provider "google" {
+  region      = "us-central1"
+  zone        = "us-central1-c"
+}
 
 resource "google_compute_instance" "docker_instance" {
   name         = "docker-workshop"
@@ -24,10 +23,6 @@ resource "google_compute_instance" "docker_instance" {
 
   network_interface {
     network = "default"
-
-    access_config {
-      // Ephemeral IP
-    }
   }
 
   metadata_startup_script = "apt-get install unzip -y && curl -fsSL https://get.docker.com -o get-docker.sh && sh get-docker.sh && curl -sL https://deb.nodesource.com/setup_12.x | bash - && apt-get install -y nodejs"
