@@ -77,7 +77,7 @@ terraform destroy -auto-approve
 cd ~/
 ```
 
-## Tear down for the Kubernetes workshop
+### Tear down for the Kubernetes workshop
 Once you are finished with the Kubernetes workshop. Run the following command in *Cloud Shell* to delete the GCP resources created.
 
 ```
